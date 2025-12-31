@@ -1,0 +1,150 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3238930349,2916,fix: Prefetch cache grows indefinitely,"## Summary
+- clean up expired items when prefetching objects so the cache does not grow endlessly
+
+## Testing
+- `npm test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878c79b4dd4832db098bcc0c17f5d47",OpenAI_Codex,5673677,mtrezza,closed,2025-07-17T09:56:32Z,2025-07-17T11:35:36Z,2025-07-17T11:35:36Z,50623416,https://api.github.com/repos/parse-community/parse-dashboard,https://github.com/parse-community/parse-dashboard/pull/2916,22,1.0,False
+3250150783,13639,Livewrapped Analytics: cleanup analytics cache,robot found a memory leak in the livewrapped auction cache,OpenAI_Codex,1683175,patmmccann,closed,2025-07-21T21:58:08Z,2025-07-23T18:39:12Z,2025-07-23T18:39:11Z,39321023,https://api.github.com/repos/prebid/Prebid.js,https://github.com/prebid/Prebid.js/pull/13639,22,1.0,False
+3165893721,84,Add cache options to prefetch,"## Summary
+- expose `PrefetchOptions` for headers, cachePolicy and ignoreQueryParamsForCacheKey
+- support the new options in JS layer
+- implement cache policy and query param logic in iOS prefetch
+- implement same logic in Android prefetch
+- document extended `prefetch` usage in README
+
+## Testing
+- `yarn typecheck`
+- `yarn test` *(fails: react-native tried to access @babel/runtime)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6857e990675483208750a30512459e80",OpenAI_Codex,105071743,candle-admin,open,2025-06-22T11:54:34Z,,,618961414,https://api.github.com/repos/candlefinance/faster-image,https://github.com/candlefinance/faster-image/pull/84,22,1.0,True
+3176692506,438,Fix event listener leak when caching data streams,"## Summary
+- use a `PassThrough` stream to decouple caching from the original response stream
+- pipe the source stream through the `PassThrough` and attach metrics/hash listeners to the new stream
+
+This prevents multiple consumers from registering listeners directly on the HTTP stream, avoiding `MaxListenersExceededWarning`.
+
+## Testing
+- `node --import ./register.js --test src/data/read-through-data-cache.test.ts`
+- `npm test --silent` *(fails: fetch failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_683ee5db8fd4832485c6cc9b6047626a",OpenAI_Codex,1110,djwhitt,closed,2025-06-25T19:11:33Z,2025-06-25T22:53:28Z,2025-06-25T22:53:28Z,480614136,https://api.github.com/repos/ar-io/ar-io-node,https://github.com/ar-io/ar-io-node/pull/438,22,1.0,False
+3098274260,13200,"Prebid 10: Disable GREEDY feature by default, break up long tasks",fixe #10062 ,OpenAI_Codex,1683175,patmmccann,closed,2025-05-28T18:53:01Z,2025-05-28T19:36:11Z,,39321023,https://api.github.com/repos/prebid/Prebid.js,https://github.com/prebid/Prebid.js/pull/13200,22,1.0,False
+3087404055,13156,Various bid adapters: remove duplicative video param validations,part of #13049 ,OpenAI_Codex,1683175,patmmccann,closed,2025-05-23T19:56:36Z,2025-05-23T21:03:12Z,,39321023,https://api.github.com/repos/prebid/Prebid.js,https://github.com/prebid/Prebid.js/pull/13156,22,1.0,False
+3189294728,13460,invibes Bid Adapter: optimize keyword parsing,"Small performance gain, testing what the agents can do",OpenAI_Codex,1683175,patmmccann,closed,2025-06-30T17:24:49Z,2025-07-10T14:23:23Z,2025-07-10T14:23:23Z,39321023,https://api.github.com/repos/prebid/Prebid.js,https://github.com/prebid/Prebid.js/pull/13460,22,1.0,False
+3190011828,13468,Ix bid adapter: cache GPT slot lookups,trying to spped up the enormous ix bid adapter,OpenAI_Codex,1683175,patmmccann,closed,2025-06-30T22:16:38Z,2025-07-02T16:58:47Z,2025-07-02T16:58:47Z,39321023,https://api.github.com/repos/prebid/Prebid.js,https://github.com/prebid/Prebid.js/pull/13468,22,1.0,False
+3238351006,2915,feat: Prefetch info panel data with config options `prefetchObjects` and `prefetchStale`,"## Summary
+- prefetch info panel data when browsing sequential rows
+- document new options `prefetchObjects` and `prefetchStale`
+
+## Testing
+- `npm test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_687894d40a6c832daffcfc644239bea4
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+## Summary by CodeRabbit
+
+* **New Features**
+  * Introduced prefetching and caching of cloud function results when browsing sequential rows in the data browser, improving performance for consecutive selections.
+  * Added configurable options for the number of objects to prefetch and the staleness duration of cached data.
+
+* **Documentation**
+  * Updated the README with descriptions and examples for the new prefetching configuration options (`prefetchObjects` and `prefetchStale`).
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->",OpenAI_Codex,5673677,mtrezza,closed,2025-07-17T06:45:48Z,2025-07-17T12:15:59Z,2025-07-17T12:15:59Z,50623416,https://api.github.com/repos/parse-community/parse-dashboard,https://github.com/parse-community/parse-dashboard/pull/2915,22,1.0,True
+3140225775,13368,Prebid 10: Add yield helper and disable greedy by default,"redo https://github.com/prebid/Prebid.js/pull/13201 for typescript base and fixes #10062
+
+see https://developer.chrome.com/blog/use-scheduler-yield",OpenAI_Codex,1683175,patmmccann,closed,2025-06-12T13:08:06Z,2025-06-26T17:51:32Z,2025-06-26T17:51:32Z,39321023,https://api.github.com/repos/prebid/Prebid.js,https://github.com/prebid/Prebid.js/pull/13368,22,1.0,False
+3253681594,1131,Fix repeated cache misses for nonexistent options,"## Summary
+- prevent redundant remote lookups when `get_option()` queries missing options by checking `notoptions` first
+
+## Testing
+- `composer install`
+- `./vendor/bin/phpunit` *(fails: require_once(/tmp/wordpress-tests-lib/includes/functions.php): No such file or directory)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_687fd6a72e188328986f67952dce65fe",OpenAI_Codex,49331357,jamesros161,closed,2025-07-22T18:30:26Z,2025-07-22T18:41:58Z,2025-07-22T18:41:58Z,125211182,https://api.github.com/repos/BoldGrid/w3-total-cache,https://github.com/BoldGrid/w3-total-cache/pull/1131,22,0.06696663251251816,False
+3151769530,282,Fix unsupported conversion caching,"## Summary
+- cache missing conversions inside `Converter.convert`
+- document caching behavior in `changelog.md`
+
+## Testing
+- `mvn -q test` *(fails: mvn not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_6850c71728cc832a94d5dc3ec0829fc8",OpenAI_Codex,5373774,jdereg,closed,2025-06-17T01:41:48Z,2025-06-17T01:41:57Z,2025-06-17T01:41:57Z,12670630,https://api.github.com/repos/jdereg/java-util,https://github.com/jdereg/java-util/pull/282,22,0.0569086530670572,False
+3158264753,316,Delay class resolution during parsing,"## Summary
+- store `@type` and `@enum` strings without resolving classes
+- resolve classes later in `Resolver` and `JsonReader`
+- add helper methods for late class resolution
+- note change in changelog
+
+## Testing
+- `mvn -q test` *(fails: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_6853302cdb60832aacef154c70e283fa",OpenAI_Codex,5373774,jdereg,closed,2025-06-18T21:49:25Z,2025-06-18T21:49:33Z,2025-06-18T21:49:33Z,12594924,https://api.github.com/repos/jdereg/json-io,https://github.com/jdereg/json-io/pull/316,22,0.054243448560149406,False
+3091989106,309,Defer class resolution in parser,"## Summary
+- add `typeName` to `JsonValue` for unresolved type strings
+- modify `JsonParser` to store type names instead of loading classes
+- resolve type names later in `Resolver`
+- update MapResolver/ObjectResolver to handle pending types
+- add unit test verifying parser keeps type names
+
+## Testing
+- `mvn -q test` *(fails: `mvn` not found)*",OpenAI_Codex,5373774,jdereg,closed,2025-05-26T20:10:52Z,2025-05-26T20:11:13Z,2025-05-26T20:11:13Z,12594924,https://api.github.com/repos/jdereg/json-io,https://github.com/jdereg/json-io/pull/309,22,0.05423689490174341,True
+3242428313,23,Fix support check caching,"## Summary
+- optimize IsSupported by caching the computed result in `PassthroughCameraUtils`
+
+## Testing
+- `true`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68795b28463c8322add25fad6a55a179",OpenAI_Codex,88709627,xrdevrob,closed,2025-07-18T08:44:15Z,2025-07-18T21:24:10Z,2025-07-18T21:24:10Z,939922153,https://api.github.com/repos/xrdevrob/QuestCameraKit,https://github.com/xrdevrob/QuestCameraKit/pull/23,22,0.05339848531801846,False
+3161574503,335,Add cache-backed type support checks,"## Summary
+- speed up `Converter` type checks
+- add single-argument support methods with caching
+- document new APIs in the user guide
+- note addition in the changelog
+- test single-argument support methods
+
+## Testing
+- `mvn -q test` *(fails: `mvn: command not found`)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_68549f930b84832a909f2e48937ae7e8",OpenAI_Codex,5373774,jdereg,closed,2025-06-20T00:11:18Z,2025-06-20T00:11:27Z,2025-06-20T00:11:27Z,12670630,https://api.github.com/repos/jdereg/java-util,https://github.com/jdereg/java-util/pull/335,22,0.05302016472905513,False
+3166859797,347,Use cached reflection APIs,"## Summary
+- leverage `ReflectionUtils` caching for Java version queries
+- use `ReflectionUtils` in `Unsafe`
+- load OSGi classes with correct loader and cached reflection
+- document reflection improvements in changelog
+
+## Testing
+- `mvn -q test` *(failed: mvn not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_6858e6750b64832abc6979f1e5574a10",OpenAI_Codex,5373774,jdereg,closed,2025-06-23T05:48:42Z,2025-06-23T05:49:02Z,2025-06-23T05:49:02Z,12670630,https://api.github.com/repos/jdereg/java-util,https://github.com/jdereg/java-util/pull/347,22,0.0440836657217385,False
+3147123418,189,Improve ReflectionUtils caches,"## Summary
+- allow ReflectionUtils cache size via system property
+- ensure custom caches use ConcurrentHashMapNullSafe
+- log failures in ClassUtilities.trySetAccessible
+- generate parameter keys using fully qualified names
+- document cache size tuning
+
+## Testing
+- `mvn -q test` *(failed: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_684e4790fa68832ab576ed66f6335c72",OpenAI_Codex,5373774,jdereg,closed,2025-06-15T05:26:31Z,2025-06-15T05:26:43Z,2025-06-15T05:26:43Z,12670630,https://api.github.com/repos/jdereg/java-util,https://github.com/jdereg/java-util/pull/189,22,0.04343276418439894,False
+3071077630,78,Optimize reflection,"## Summary
+- reduce reflection with property and type caching in `ChangePropertyAction`
+- compile property setters with expressions
+- compile method calls for `CallMethodAction`
+
+## Testing
+- `./build.sh -t Test` *(failed: `dotnet` not found)*",OpenAI_Codex,2297442,wieslawsoltes,closed,2025-05-17T21:30:50Z,2025-05-19T10:55:55Z,,792160692,https://api.github.com/repos/wieslawsoltes/Xaml.Behaviors,https://github.com/wieslawsoltes/Xaml.Behaviors/pull/78,22,0.04297080290842149,False

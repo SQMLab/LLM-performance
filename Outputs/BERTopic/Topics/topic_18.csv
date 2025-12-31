@@ -1,0 +1,257 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3257102140,4363,Primitives for raw OCaml block access,"## Summary
+
+This PR extracts the Flambda2 parts of the block indices work from PR #4017 (rtjoa.block-indices). It adds two new primitives that will enable faster field access in unusual use cases, similar to Obj.raw_field but with better performance.
+
+## Changes
+
+- **Read_offset**: Binary primitive that reads from a memory location at a given offset
+- **Write_offset**: Ternary primitive that writes to a memory location at a given offset
+
+Both primitives include:
+- Proper type kinds and mutability/allocation mode tracking
+- Placeholder CMM translations (add offset to base pointer, then load/store)
+- Code size estimates
+- Basic simplification support
+
+This is a draft PR as these primitives will need user-facing wrappers before they can be used.
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>",Claude_Code,1315488,mshinwell,open,2025-07-23T17:03:02Z,,,312271526,https://api.github.com/repos/oxcaml/oxcaml,https://github.com/oxcaml/oxcaml/pull/4363,18,1.0,True
+3217089921,7040,Add conditional runtime emission to OCaml compiler,"## Summary
+- enhance OCaml backend with feature scanning
+- emit runtime helpers only when required by a program
+
+## Testing
+- `go vet ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ed0a11314832096a2c9d827d6effa",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T20:42:41Z,2025-07-09T20:42:56Z,2025-07-09T20:42:56Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7040,18,1.0,False
+3116850813,741,Switch JSON floats to lexical-core,"## Summary
+- swap in lexical-core for floating point formatting/parsing
+- document change in changelog
+- use cargo-nextest for tests
+- address review comments about imports
+
+## Testing
+- `cargo nextest run -p facet-json --lib --test-threads=1`
+- `cargo nextest run -p facet-json --tests --test-threads=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_b_683ff63d33a483329f82d69507ea5db8",OpenAI_Codex,7998310,fasterthanlime,closed,2025-06-04T07:47:14Z,2025-06-04T09:44:36Z,,945896114,https://api.github.com/repos/facet-rs/facet,https://github.com/facet-rs/facet/pull/741,18,1.0,False
+3217761016,7115,Improve Haskell compiler runtime,"## Summary
+- update Haskell compiler to avoid importing Aeson unless JSON features are used
+- split AnyValue runtime from JSON loader runtime
+- regenerate machine Haskell outputs with the lighter runtime
+- note missing `.out` files in checklist
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686f30dd4a388320913ab7cc1a7310a0",OpenAI_Codex,1218621,tamnd,closed,2025-07-10T03:36:30Z,2025-07-10T03:36:48Z,2025-07-10T03:36:48Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7115,18,1.0,False
+3164738704,2463,Improve Java compiler runtime emission,"## Summary
+- only emit Java runtime helpers when they are actually required
+
+## Testing
+- `go test ./... --vet=off`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68562cdb3f908320af3140f85aad43f3",OpenAI_Codex,1218621,tamnd,closed,2025-06-21T04:15:30Z,2025-06-21T04:17:57Z,2025-06-21T04:17:57Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2463,18,1.0,False
+3128735694,206,Skip async runtime when no streams,"## Summary
+- detect stream/agent usage in Python and TypeScript compilers
+- generate synchronous `main` function and omit `_waitAll` when not needed
+- update golden outputs for Python and TypeScript compilers
+
+## Testing
+- `go test ./compile/...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_684609e02b748320a2e6ddaa40659b23",OpenAI_Codex,1218621,tamnd,closed,2025-06-08T22:17:58Z,2025-06-08T22:20:29Z,2025-06-08T22:20:29Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/206,18,1.0,False
+3238739331,9262,Improve OCaml compiler inference,"## Summary
+- refine OCaml compiler to only emit runtime helpers when necessary
+- update generated OCaml code for VM tests
+
+## Testing
+- `UPDATE=1 go test -tags slow -run VMValid -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878b74ce7b08320b47ec699287285ee",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T08:56:40Z,2025-07-17T08:56:51Z,2025-07-17T08:56:51Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9262,18,1.0,False
+3164722645,2457,Optimize Erlang runtime helpers,"## Summary
+- minimize Erlang runtime output by tracking which helper functions are used
+- generate helper code only when required
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685627d9c8e48320996deb5d08c4a2f8",OpenAI_Codex,1218621,tamnd,closed,2025-06-21T03:48:31Z,2025-06-21T03:52:33Z,2025-06-21T03:52:33Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2457,18,1.0,False
+3127297110,154,Enable async stream handlers,"## Prompt
+```
+Now, careful review this:
+
+case s.Emit != nil:
+		ev := map[string]any{}
+		for _, f := range s.Emit.Fields {
+			v, err := i.evalExpr(f.Value)
+			if err != nil {
+				return err
+			}
+			ev[f.Name] = v
+		}
+		strm, ok := i.streams[s.Emit.Stream]
+		if !ok {
+			return fmt.Errorf(""undefined stream: %s"", s.Emit.Stream)
+		}
+		if _, err := strm.Append(context.Background(), ev); err != nil {
+			return err
+		}
+		for _, h := range i.handlers[s.Emit.Stream] {
+			child := types.NewEnv(i.env)
+			child.SetValue(h.alias, ev, true)
+			interp := &Interpreter{prog: i.prog, env: child, types: i.types, streams: i.streams, handlers: i.handlers}
+			for _, stmt := range h.body {
+				if err := interp.evalStmt(stmt); err != nil {
+					return err
+				}
+			}
+		}
+		return nil
+
+Is this for loop through i.handlers will block if one handler is slow?
+How to enhance and make it independence? Learn from Subscriber in runtime/stream, could we use this?
+```
+and
+```
+Now, enhance the code, use Subscriber, and make sure all are closed when the program is done.
+```
+## Summary
+- make `Interpreter` manage subscribers via `runtime/stream`
+- register watchers for `on` handlers and process events concurrently
+- simplify `emit` logic
+- add cleanup of handlers and streams when interpretation completes
+
+## Testing
+- `go vet ./...`
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6844740f3e848320a101af48ecde6989",OpenAI_Codex,1218621,tamnd,closed,2025-06-07T17:30:32Z,2025-06-07T17:31:12Z,2025-06-07T17:31:12Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/154,18,1.0,True
+3238796960,9291,Improve Racket backend runtime helper selection,"## Summary
+- split runtime helper code into individual constants
+- track runtime helpers used during compilation and emit only those
+- add simple expression type inference so `str` results are known
+- update print, min/max, json and yaml helpers to use runtimeFuncs
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878bafa04448320affda9aaa96e2031",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T09:15:15Z,2025-07-17T09:16:00Z,2025-07-17T09:16:00Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9291,18,1.0,False
+3250286583,11614,Optimize runtime helpers,"## Summary
+- avoid emitting unused runtime helpers in Go compiler
+- avoid emitting unused runtime helpers in TS compiler
+- update golden compiler outputs
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6840473ca678832093db7cec285df3e4",OpenAI_Codex,1218621,tamnd,closed,2025-07-21T23:05:59Z,2025-07-21T23:17:40Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/11614,18,1.0,False
+3158765147,2027,Elixir runtime helpers emitted as needed,"## Summary
+- track helper usage in the Elixir compiler
+- emit `_input`, `_count`, and `_avg` helper functions only when referenced
+- document helper behaviour in Elixir compiler README
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68537eb637a48320831ba047f4963969",OpenAI_Codex,1218621,tamnd,closed,2025-06-19T03:17:37Z,2025-06-19T03:20:42Z,2025-06-19T03:20:42Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2027,18,1.0,False
+3117839444,41,Optimize runtime helpers,"## Prompt
+
+Now, update Mochi to Go and Typescript compiler, only include runtime functions if it is used.
+
+## Summary
+- add a helper usage tracker to both Go and TypeScript compilers
+- emit runtime helper functions only when they are referenced
+- update golden outputs for compilers
+
+## Testing
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_684046acbe508320bf04b4aa052d4872",OpenAI_Codex,1218621,tamnd,closed,2025-06-04T13:25:31Z,2025-06-04T13:25:50Z,2025-06-04T13:25:49Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/41,18,1.0,False
+3205879151,400,Support VM Reuse with Different Compiled Code,"Add `RunCode` method to `vm.VirtualMachine` to enable running multiple compiled code objects on a single VM, improving performance and state management for sequential script execution.
+
+Relates to: https://github.com/risor-io/risor/issues/374",Cursor,1389638,myzie,closed,2025-07-06T01:14:37Z,2025-07-06T13:35:23Z,2025-07-06T13:35:23Z,561389689,https://api.github.com/repos/deepnoodle-ai/risor,https://github.com/deepnoodle-ai/risor/pull/400,18,1.0,False
+3217758395,7113,Improve C++ compiler runtime handling,"## Summary
+- make C++ compiler emit JSON helpers only when needed
+- automatically select standard library includes based on generated code
+
+## Testing
+- `go vet ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686f2f4e9c74832096d9d0143dbd512a",OpenAI_Codex,1218621,tamnd,closed,2025-07-10T03:34:50Z,2025-07-10T08:54:39Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7113,18,1.0,False
+3177404139,3321,Switch MCP server to VM runtime,"## Summary
+- use `runtime/vm` instead of the interpreter when MCP executes source code
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685c9f81300883208f1983dbc49b04c0",OpenAI_Codex,1218621,tamnd,closed,2025-06-26T01:22:20Z,2025-06-26T01:23:37Z,2025-06-26T01:23:37Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3321,18,1.0,False
+3226153576,8307,Improve Racket backend,"## Summary
+- specialize Racket `len` builtin for string literals
+- add TODO tracker in `compiler/x/racket/TASKS.md`
+- document outstanding work in the Racket machine README
+
+## Testing
+- `go test ./compiler/x/racket -run TestRacketCompiler -tags slow -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68733d25ef408320bd11e095d3b480bf",OpenAI_Codex,1218621,tamnd,closed,2025-07-13T05:31:35Z,2025-07-13T05:31:48Z,2025-07-13T05:31:48Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/8307,18,0.17829839206298517,False
+3181363640,3611,Improve Racket backend formatting,"## Summary
+- pretty-print generated Racket code with `raco fmt`
+- regenerate Racket compiler golden files with formatting improvements
+
+## Testing
+- `go test ./compile/x/rkt -tags slow -run TestRacketCompiler_GoldenOutput -update`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685e22cc02d08320ac820d2f1a8256a9",OpenAI_Codex,1218621,tamnd,closed,2025-06-27T04:59:02Z,2025-06-27T05:01:21Z,2025-06-27T05:01:21Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3611,18,0.1417787359864968,False
+3222683231,7751,Improve Java compiler string concatenation,"## Summary
+- enhance Java backend to use `StringBuilder` when translating string concatenations
+- add new follow-up items to Java machine README
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6870f08bdb6083208d78e4956c95bd2a",OpenAI_Codex,1218621,tamnd,closed,2025-07-11T12:09:49Z,2025-07-11T12:10:02Z,2025-07-11T12:10:02Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7751,18,0.13626434680811753,False
+3088785176,19894,Enable reloc info for BOLT,"## Summary
+- allow `--emit-relocs -q` on Linux release builds so BOLT can post-process Bun
+
+## Testing
+- `ld.lld --help | head`",OpenAI_Codex,709451,Jarred-Sumner,closed,2025-05-24T21:56:16Z,2025-05-29T06:01:05Z,,357728969,https://api.github.com/repos/oven-sh/bun,https://github.com/oven-sh/bun/pull/19894,18,0.1060893191311622,False
+3146221157,759,Set release LTO to thin,"FatLTO takes a lot of time and it's annoyingly slow when I am trying multiple variants of some code. I tasked codex to check different options, and it gave me this:
+
+<img width=""994"" alt=""Screenshot 2025-06-14 at 16 24 21"" src=""https://github.com/user-attachments/assets/5002c702-091e-4425-8335-a893e6b3e80c"" />
+
+I double checked the results and it seems to confirm this[^1]:
+
+[^1]: tested on the Keccak example by changing something in binius_field and rebuilding.
+
+1. ThinLTO reduces time ≈2x. From 1m 12s with FatLTO to 35s with ThinLTO.
+2. The data suggests consistent perf improvement in FatLTO case. The improvement is very modest. [^2].
+ 
+That makes me think that it's better to assign thin LTO for the release profile by default. In case somebody needs to squeeze extra juice, they can add extra rustc flags.
+
+[^2]: IPC is better by 0.5%, 0.7% less instruction executed. 0.8% faster wallclock time.",OpenAI_Codex,2205845,pepyakin,closed,2025-06-14T14:20:29Z,2025-06-15T14:52:32Z,,742623962,https://api.github.com/repos/IrreducibleOSS/binius,https://github.com/IrreducibleOSS/binius/pull/759,18,0.08251107185257103,True

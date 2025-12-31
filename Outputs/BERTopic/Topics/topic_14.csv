@@ -1,0 +1,238 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3240157506,9343,Improve Fortran constant list folding,"## Summary
+- add constant list propagation to the Fortran compiler
+- fold `len`, `count`, `append`, `union`, `except`, etc. when lists are stored in variables
+- document new capability in `tests/machine/x/fortran/README.md`
+- record progress in `compiler/x/fortran/TASKS.md`
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878e86c20c08320a63456631fb49b9d",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T16:17:26Z,2025-07-17T16:17:41Z,2025-07-17T16:17:40Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9343,14,1.0,True
+3240293813,9363,Improve Fortran constant folding,"## Summary
+- enhance Fortran compiler constant folding
+- fold `len` for constant strings
+- document new optimization in README and TASKS
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879243a44f48320af68a4631a1439b9",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T17:03:04Z,2025-07-17T17:03:19Z,2025-07-17T17:03:19Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9363,14,1.0,False
+3240180435,9350,fortran: fold len/count on constant lists,"## Summary
+- improve Fortran compiler constant folding
+- track lengths of constant lists for `len` and `count`
+- document the new optimisation
+
+## Testing
+- `go test ./compiler/x/fortran -run TestFortranCompiler_VMValid_Golden -tags slow -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879223147d08320a00dddbdab02d1c0",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T16:26:10Z,2025-07-17T16:26:22Z,2025-07-17T16:26:22Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9350,14,1.0,False
+3240351285,9378,fortran: fold membership constants,"## Summary
+- fold membership checks on constant integer or string lists at compile time
+- document membership folding in TASKS
+- mention optimized membership in machine README
+
+## Testing
+- `go test ./compiler/x/fortran -tags=slow -count=1` *(fails: 24 passed, 76 failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68792cde63108320a83946a3f4f6a80a",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T17:24:51Z,2025-07-17T17:25:03Z,2025-07-17T17:25:03Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9378,14,1.0,False
+3242395273,9542,Improve Fortran compiler constant propagation,"## Summary
+- extend Fortran compiler with new constant scalar maps
+- propagate integers, booleans, floats, and maps through assignments
+- fold `values` builtin when its argument refers to a constant map
+
+## Testing
+- `go test ./compiler/x/fortran -tags slow -run TestFortranCompiler_VMValid_Golden -count=1` *(fails: unsupported expression at line 1)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879ffdd986083208b021a0ca87d817c",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T08:33:24Z,2025-07-18T08:36:49Z,2025-07-18T08:36:49Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9542,14,1.0,False
+3241741490,9475,Improve Fortran set-op folding,"## Summary
+- enhance Fortran compiler to fold chained set operations when all operands are constants
+- note the new feature in TASKS and machine README
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879c1193bcc8320bb57e994fd7506e7",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:43:44Z,2025-07-18T03:44:46Z,2025-07-18T03:44:46Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9475,14,1.0,False
+3241727428,9464,Improve Fortran constant folding,"## Summary
+- extend the Fortran compiler with tracking for boolean and float list constants
+- fold `len`, `count`, `append`, `union`, `union_all`, `except`, and `intersect` when applied to constant boolean or float lists
+- expose helpers `literalBoolUnary`, `literalFloatUnary` and propagate literal bool/float expressions
+- document the new optimisation in the Fortran README and TASKS
+
+## Testing
+- `go test -c ./compiler/x/fortran -tags slow`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879bbe43f988320873ee8bb5f2f1d9f",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:35:35Z,2025-07-18T03:35:46Z,2025-07-18T03:35:46Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9464,14,1.0,True
+3238766901,9275,Improve Fortran constant folding,"## Summary
+- constant-fold list set operations (`union`, `union_all`, `except`, `intersect`) when both operands are integer literals
+- run Fortran VM valid tests without using prewritten sources
+- note the new behaviour in documentation
+
+## Testing
+- `go test -tags slow -run TestFortranCompiler_VMValid_Golden -v` *(fails: gfortran not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878b9d7302c8320a86eef43a1838a96",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T09:05:48Z,2025-07-17T09:06:50Z,2025-07-17T09:06:50Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9275,14,1.0,False
+3238725592,9254,Improve Fortran compiler constant folding,"## Summary
+- inline constant results for `len` and `count` when called on list literals
+- document new behaviour in TASKS and machine README
+
+## Testing
+- `go test ./compiler/x/fortran -run VMValid_Golden -tags slow -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878b73f3d3c8320b491a00a2c87115b",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T08:52:23Z,2025-07-17T08:52:36Z,2025-07-17T08:52:36Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9254,14,1.0,False
+3239345955,9319,Enhance Fortran compiler,"## Summary
+- fold simple integer `append` calls at compile time
+- document progress in Fortran TASKS
+
+## Testing
+- `go test ./compiler/x/fortran -run TestFortranCompiler_VMValid_Golden -tags slow`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878e41b54688320a41b4c874d2b577f",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T12:10:30Z,2025-07-17T12:11:07Z,2025-07-17T12:11:07Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9319,14,1.0,False
+3242791087,9665,Improve Rust compiler constant list append,"## Summary
+- extend Rust compiler with `constList` tracking
+- fold `append` calls with constant lists into a single vector literal
+- document improvement in Rust README and TASKS
+- regenerate `append_builtin.rs` code
+
+## Testing
+- `go test ./compiler/x/rust -tags slow -run VM -count=1 -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_687a20b5d54c8320872643530da3c16e",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T10:43:07Z,2025-07-18T10:43:16Z,2025-07-18T10:43:16Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9665,14,0.41406542741887725,False
+3241693904,9439,Improve Fortran compiler constant folding,"## Summary
+- fold constant string lists in `append` and set operations
+- precompute membership checks when the list contains constant strings
+- track constant string lists during code generation
+
+## Testing
+- `go test ./compiler/x/fortran -tags slow -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879b66c299c832098b5ccdace2e0b91",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:13:06Z,2025-07-18T03:13:35Z,2025-07-18T03:13:35Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9439,14,0.41283345887541245,True
+3224348044,7860,Improve C compiler constant folding,"## Summary
+- track literal integer lists in compiler
+- fold `append` on constant int lists
+
+## Testing
+- `go test ./compiler/x/c -tags slow -run TestCCompiler_ValidPrograms -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68715f9b9e94832087da86b731f099e6",OpenAI_Codex,1218621,tamnd,closed,2025-07-11T22:11:59Z,2025-07-11T22:12:12Z,2025-07-11T22:12:12Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7860,14,0.3098895684182642,False
+3241753827,9480,Add constant string list inference to C backend,"## Summary
+- improve C compiler by tracking string list constants
+- precompute len/count/min/max for constant string lists
+- regenerate golden outputs
+- update compilation status and task log
+
+## Testing
+- `go test -tags slow ./compiler/x/c -run TestCCompiler_VMValid_Golden -update` *(fails: group_by_multi_join_sort, save_jsonl_stdout, tree_sum, update_stmt)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879c16a1c8483208ed805fdaf4bd6ef",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:50:55Z,2025-07-18T03:51:20Z,2025-07-18T03:51:20Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9480,14,0.2696112012778921,False
+3227087590,8622,Add list deallocation in C backend,"## Summary
+- free allocated result lists when compiling to C
+- append results to free list in `compileQueryExpr`
+- track allocations in the compiler
+- regenerate C output for `cross_join`
+- note enhancement in C `TASKS.md`
+
+## Testing
+- `go build -tags slow ./cmd/...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68745b757a288320bbcea20af92942e0",OpenAI_Codex,1218621,tamnd,closed,2025-07-14T01:40:17Z,2025-07-14T01:40:32Z,2025-07-14T01:40:32Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/8622,14,0.2500406251759793,False
+3224871375,7914,Improve C backend list handling,"## Summary
+- expand C helper functions with `isListBoolType`
+- treat `len` selector on constant lists with compile-time length
+- index bool lists as arrays instead of struct data
+
+## Testing
+- `go test ./... -run TestDummy -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6871f0db1430832090e6cb81e7eb3e1b",OpenAI_Codex,1218621,tamnd,closed,2025-07-12T05:43:56Z,2025-07-12T05:44:07Z,2025-07-12T05:44:07Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7914,14,0.23130123619865273,False
+3225111162,7934,Update C backend to use stack arrays,"## Summary
+- add helper for `contains_array_int` and generate it when a list expression is backed by a stack array
+- emit `contains_array_int` instead of `contains_list_int` when possible
+- use `listLenExpr` and `listItemExpr` for query loops
+- regenerate C machine outputs
+
+## Testing
+- `go test ./compiler/x/c -run TestCCompiler_ValidPrograms -tags slow -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6872288ed9c88320812146efd45b5b2f",OpenAI_Codex,1218621,tamnd,closed,2025-07-12T09:35:57Z,2025-07-12T09:37:03Z,2025-07-12T09:37:03Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7934,14,0.20730782807628856,False
+3202700175,5046,Improve C backend type inference and inline string ops,"## Summary
+- improve `listElemType` inference to avoid `AnyType`
+- inline string index and slice operations instead of calling runtime helpers
+- drop unused helper flags when deciding string headers
+
+## Testing
+- `make test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6867d011c5b483208fa0bf0500371c72",OpenAI_Codex,1218621,tamnd,closed,2025-07-04T13:08:13Z,2025-07-04T13:08:26Z,2025-07-04T13:08:26Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/5046,14,0.02166762063495525,False
+3238674493,9244,Improve C# list indexing,"## Summary
+- enhance `compilePostfix` to emit direct indexing when the list or string type is known
+- add generated `list_index.cs` with expected output
+- update C# machine README
+
+## Testing
+- `go vet ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878b1d7ed3c8320adcc27eeaeee9360",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T08:37:36Z,2025-07-17T08:38:09Z,2025-07-17T08:38:09Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9244,14,0.021424008995835686,False
+3128833247,209,Improve compiler string slicing,"## Summary
+- specialize string slicing helpers for Go, Python and TypeScript compilers
+- pick specialized helper based on inferred type
+- add slice compilation test
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68460df9198083209ebd9148bd814d0c",OpenAI_Codex,1218621,tamnd,closed,2025-06-09T00:46:12Z,2025-06-09T00:58:55Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/209,14,0.020448357460557755,False
+3198134004,4798,Improve C++ type inference,"## Summary
+- improve selector and if-expression type inference for the C++ backend
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686617f5b2b8832083d24f4694f551d1",OpenAI_Codex,1218621,tamnd,closed,2025-07-03T05:56:13Z,2025-07-03T05:56:24Z,2025-07-03T05:56:24Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4798,14,0.019769402761342307,False
+3128738345,207,Improve Go string indexing,"## Summary
+- specialize Go compiler index logic
+- add `_indexString` helper
+- update golden output for string indexing
+
+## Testing
+- `go test ./compile/go`
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68460b505d208320bae3bfb485cb136a",OpenAI_Codex,1218621,tamnd,closed,2025-06-08T22:23:02Z,2025-06-08T22:23:50Z,2025-06-08T22:23:50Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/207,14,0.01921001100491771,False
+3158684496,2003,Improve C++ backend type inference,"## Summary
+- detect variable types from initial values instead of always using `auto`
+- avoid copies when iterating over containers by using const references
+- add a small helper for primitive type detection
+
+## Testing
+- `go vet ./...`
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_685370de48648320b4b91019db80c93e",OpenAI_Codex,1218621,tamnd,closed,2025-06-19T02:26:12Z,2025-06-19T02:32:32Z,2025-06-19T02:32:32Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2003,14,0.01864502476251156,False

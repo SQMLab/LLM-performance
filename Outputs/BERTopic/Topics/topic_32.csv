@@ -1,0 +1,176 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3250634096,14069,Speed up fast retail autocomplete,"## Summary
+- add `StockDTO` for lighter stock queries
+- autocomplete uses `StockDTO` results
+- assign selected stock using DTO id
+
+## Testing
+- `mvn -q -DskipTests package` *(fails: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_687ee62ebc20832fb7194755a6c2dde2",OpenAI_Codex,1226946,buddhika75,closed,2025-07-22T01:39:53Z,2025-07-22T01:40:14Z,2025-07-22T01:40:14Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14069,32,1.0,False
+3261340058,14153,Refactor payment creation for fast retail sales,"## Summary
+- delegate payment creation to `PaymentProcessingService`
+
+## Testing
+- `mvn clean compile` *(fails: Could not transfer artifact maven-clean-plugin from https://repo.maven.apache.org)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6882a636a6d8832f9138cb33f66ba543",OpenAI_Codex,1226946,buddhika75,closed,2025-07-24T21:38:26Z,2025-07-24T21:38:49Z,2025-07-24T21:38:48Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14153,32,1.0,False
+3248859844,14047,Implement optimized pharmacy retail sale page,"## Summary
+- add `PharmacySaleFastRetailSaleController` extending the existing sale controller
+- introduce `PharmacySaleQuick` privilege
+- create new page `pharmacy_fast_retail_sale.xhtml` without other sale buttons
+- link the new page from menu as *Sale (Fast)*
+
+## Testing
+- `mvn -v` *(fails: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_687e464da218832f9591a3a1672e8439",OpenAI_Codex,1226946,buddhika75,closed,2025-07-21T14:18:10Z,2025-07-21T14:30:35Z,2025-07-21T14:30:35Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14047,32,1.0,False
+3184427385,13447,Consolidate pharmacy sales queries,"## Summary
+- add `calDepartmentSalesAllInstitutions` to fetch sales for all institutions in one query
+- refactor `createInstitutionSale` to use the new aggregated result
+
+## Testing
+- `mvn -q test` *(fails: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685f46a08b94832fb4535898a2b1a94d",OpenAI_Codex,1226946,buddhika75,closed,2025-06-28T01:38:26Z,2025-06-28T01:38:41Z,2025-06-28T01:38:41Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/13447,32,1.0,False
+3253577106,14092,Switch fast retail autocomplete to StockDTO,"## Summary
+- update `PharmacyFastRetailSaleController` to store a StockDTO object and keep a cache of autocomplete results
+- update the StockDTO converter to resolve values from the cached list
+- adjust `pharmacy_fast_retail_sale.xhtml` autocomplete to use StockDTO
+
+## Testing
+- `mvn -q test` *(fails: Plugin org.apache.maven.plugins:maven-resources-plugin:2.6 could not be resolved)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_687fcc65df74832f97b0d2461b286737",OpenAI_Codex,1226946,buddhika75,closed,2025-07-22T17:52:43Z,2025-07-22T17:53:06Z,2025-07-22T17:53:06Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14092,32,1.0,False
+3155206359,13180,Implement bill item DTO for pharmacy income report,"## Summary
+- optimize pharmacy income & cost report by bill item
+- add `PharmacyIncomeCostBillItemDTO`
+- fetch bill item DTOs in `BillService`
+- support DTO rows in `IncomeBundle` and `IncomeRow`
+- adjust report controller and JSF view
+- allow loading bill by id in bill search
+
+## Testing
+- `mvn test` *(fails: mvn not installed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68521947c2f8832fb41575f65e61c6d2",OpenAI_Codex,1226946,buddhika75,closed,2025-06-18T01:59:36Z,2025-06-18T02:00:01Z,2025-06-18T02:00:01Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/13180,32,1.0,True
+3155232556,13181,Implement bill item DTO for pharmacy income report,"## Summary
+- optimize pharmacy income & cost report by bill item
+- add `PharmacyIncomeCostBillItemDTO`
+- fetch bill item DTOs in `BillService`
+- support DTO rows in `IncomeBundle` and `IncomeRow`
+- adjust report controller and JSF view
+- allow loading bill by id in bill search
+- fix constructor clash and missing import
+
+Closes #13176
+
+## Testing
+- `mvn test` *(fails: mvn not installed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68521947c2f8832fb41575f65e61c6d2",OpenAI_Codex,1226946,buddhika75,closed,2025-06-18T02:17:13Z,2025-06-18T02:19:34Z,2025-06-18T02:19:34Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/13181,32,1.0,True
+3265223442,14186,14185 optimize stock deduction,"## Summary
+- add `OptimizedPharmacyBean` with batch stock deduction logic
+- integrate fast sale controller with optional optimized mode
+- test optimized stock deduction
+
+Closes #14185
+
+------
+https://chatgpt.com/codex/tasks/task_e_6884761bf160832fada627f2e07b525e",OpenAI_Codex,1226946,buddhika75,closed,2025-07-26T06:40:50Z,2025-07-26T06:51:01Z,2025-07-26T06:51:01Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14186,32,1.0,False
+3153919447,13158,Add PharmacyIncomeRow DTO and use it for cost report,"## Summary
+- introduce `PharmacyIncomeRow` lightweight DTO
+- fetch only selected fields in `BillService.fetchPharmacyIncomeRows`
+- update `IncomeBundle` and `IncomeRow` to support the DTO
+- use the lightweight DTO in pharmacy income & cost report
+- adjust report page to reference new DTO fields
+- expose helper to fetch bills by id for view actions
+
+## Testing
+- `mvn -version` *(fails: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68518673d000832f8c0b0b987ac16be5",OpenAI_Codex,1226946,buddhika75,closed,2025-06-17T15:28:28Z,2025-06-17T15:28:55Z,2025-06-17T15:28:55Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/13158,32,1.0,False
+3267205179,14263,Optimize OPD Income Report with DTO queries,"## Summary
+- add `OpdIncomeReportDTO` with basic and detailed constructors
+- extend `IncomeRow` and `IncomeBundle` for new DTO
+- implement `BillService.fetchOpdIncomeReportDTOs`
+- support optimized navigation in `OpdReportController`
+- add DTO-based page `opd_income_report_dto.xhtml`
+- include navigation toggle on legacy page
+- add unit tests for DTO query method
+
+Navigation Path for QA Testing:
+1. OPD → Analytics → Summary Reports → **OPD Income Report**
+2. Toggle between Legacy/Optimized pages using buttons
+3. Configuration key `OPD Income Report - Optimized Method` enables optimized page by default
+
+Closes #0
+
+------
+https://chatgpt.com/codex/tasks/task_e_68863a3d9138832f81b137eb92008883",OpenAI_Codex,1226946,buddhika75,closed,2025-07-27T15:35:45Z,2025-07-27T15:36:08Z,2025-07-27T15:36:08Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14263,32,1.0,False
+3266987057,14255,14220 optimize laboratory income report using dtos,"## Summary
+- add configuration defaults for lab income report
+- implement LabIncomeReportDTO and service method
+- update Lab report controller with DTO generation and navigation methods
+- add optimized DTO page and navigation toggle
+
+Navigation Path for QA Testing:
+1. Navigate to Reports → Lab → Income Reports
+2. Select ""Laboratory Income Report""
+3. Use navigation buttons to switch between Legacy and Optimized methods
+
+Closes #14220
+
+------
+https://chatgpt.com/codex/tasks/task_e_6885fa8ebe38832fac4647a4d6442a92",OpenAI_Codex,1226946,buddhika75,closed,2025-07-27T10:48:48Z,2025-07-27T10:49:11Z,2025-07-27T10:49:11Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14255,32,1.0,True
+3266988027,14257,14221 optimize opd itemized sale summary report using dtos,"## Summary
+- add OpdSaleSummaryDTO and BillService query for OPD sale summaries
+- add controller methods and navigation to new DTO-based summary
+- expose config options for report optimization
+- create itemized_sale_summary_dto.xhtml for optimized view
+
+Closes #14221
+
+------
+https://chatgpt.com/codex/tasks/task_e_6885fadd9f08832fbc441cd0cf4eb548",OpenAI_Codex,1226946,buddhika75,closed,2025-07-27T10:50:29Z,2025-07-27T10:50:48Z,2025-07-27T10:50:48Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14257,32,1.0,False
+3266989317,14259,14219 optimize test wise count report using dto,"## Summary
+- add TestCountDTO for DTO-based lab test count results
+- configure report method defaults
+- support optimized Test Wise Count report in `LaborataryReportController`
+- add navigation buttons for optimized/legacy Test Wise Count reports
+- create `test_wise_count_dto.xhtml` with DTO logic
+
+Navigation Path for QA Testing:
+1. Reports → Lab → Test Reports → Test Wise Count
+2. Use navigation buttons to switch between Legacy and Optimized methods
+
+Closes #14219
+
+------
+https://chatgpt.com/codex/tasks/task_e_6885f999d6b4832fb69bbaf5196941e4",OpenAI_Codex,1226946,buddhika75,closed,2025-07-27T10:52:42Z,2025-07-27T10:53:06Z,2025-07-27T10:53:06Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14259,32,1.0,False
+3265736885,14205,14196 performance bottleneck fix,"## Summary
+- cache ItemBatch and Stock references on Pharmacy fast retail sale operations
+
+Closes #14196
+
+------
+https://chatgpt.com/codex/tasks/task_e_6884e0c4a494832f815c86b1f675cc78",OpenAI_Codex,1226946,buddhika75,closed,2025-07-26T14:22:12Z,2025-07-26T15:42:31Z,,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14205,32,1.0,False
+3267689271,14269,Implement fast sale for cashier page and controller,"## Summary
+- add PharmacyFastRetailSaleForCashierController for optimized cashier flow
+- create `pharmacy_fast_retail_sale_for_cashier.xhtml` page
+- expose new menu item ""Sale for Cashier - By Item""
+- document new navigation path
+
+## Testing
+- `./detect-maven.sh test` *(failed: Plugin resolution error)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6886bc70fc44832fa2011054b9c30d38",OpenAI_Codex,1226946,buddhika75,closed,2025-07-28T01:44:21Z,2025-07-28T01:44:37Z,2025-07-28T01:44:37Z,21764480,https://api.github.com/repos/hmislk/hmis,https://github.com/hmislk/hmis/pull/14269,32,1.0,False

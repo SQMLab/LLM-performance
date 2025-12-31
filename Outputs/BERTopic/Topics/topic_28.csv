@@ -1,0 +1,372 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3134916409,251153,Fix notebook sticky scroll flashing by using single reusable delayer,"The notebook sticky scroll was experiencing continuous flashing when scrolling headers close to the sticky scroll area. This was caused by improper debouncing in the scroll event handler.
+
+## Root Cause
+
+Each scroll event created a new `Delayer(100)` instance, but multiple delayers could be active simultaneously when scroll events occurred rapidly (faster than 100ms apart). This caused:
+
+1. Multiple delayed updates to be pending at once
+2. Rapid successive content updates
+3. Visual flashing as the sticky scroll content updated repeatedly
+4. Potential memory inefficiency from creating/disposing many delayer instances
+
+## Solution
+
+Replace the per-event delayer creation with a single reusable delayer instance:
+
+**Before:**
+```typescript
+this._disposables.add(this.notebookEditor.onDidScroll(() => {
+    const d = new Delayer(100);  // ❌ New delayer each time
+    d.trigger(() => {
+        d.dispose();
+        // ... update logic
+    });
+}));
+```
+
+**After:**
+```typescript
+private readonly scrollDelayer = this._register(new Delayer(100));
+
+this._disposables.add(this.notebookEditor.onDidScroll(() => {
+    this.scrollDelayer.trigger(() => {  // ✅ Reuse same delayer
+        // ... update logic
+    });
+}));
+```
+
+## Benefits
+
+- **Eliminates flashing**: Only one delayed update can be pending at a time
+- **Improves performance**: No overhead from creating/disposing multiple delayers
+- **Better memory usage**: Single reusable instance vs multiple short-lived instances
+- **Maintains functionality**: All existing behavior preserved
+- **Minimal change**: Only 6 lines added, 4 removed
+
+## Testing
+
+Validated with a mock implementation that simulates rapid scroll events - the fix successfully debounces multiple events into a single update call.
+
+Fixes #211114.",Copilot,198982749,Copilot,open,2025-06-10T21:45:31Z,,,41881900,https://api.github.com/repos/microsoft/vscode,https://github.com/microsoft/vscode/pull/251153,28,1.0,True
+3173304702,252342,Fix sticky scroll performance issue by using correct array for min content width calculation,"Sticky scrolling was causing noticeable performance issues and stuttering during scroll operations due to inefficient DOM queries in the `StickyScrollWidget._renderRootNode` method.
+
+## Problem
+
+The `_renderRootNode` method was calculating `_minContentWidthInPx` using the old `this._renderedStickyLines` array instead of the newly built `renderedStickyLines` array. This caused:
+
+1. **Performance degradation**: Reading `scrollWidth` from potentially stale/removed DOM elements triggered unnecessary layout recalculations
+2. **Incorrect calculations**: Using outdated scroll width values from elements that were being removed from the DOM
+3. **Browser frame drops**: The additional layout work caused visible stuttering during scroll operations
+
+## Solution
+
+Changed line 248 in `stickyScrollWidget.ts` to use the correct array and added proper empty array handling:
+
+```typescript
+// Before (buggy):
+this._minContentWidthInPx = Math.max(...this._renderedStickyLines.map(l => l.scrollWidth)) + layoutInfo.verticalScrollbarWidth;
+
+// After (fixed):
+this._minContentWidthInPx = renderedStickyLines.length > 0 
+    ? Math.max(...renderedStickyLines.map(l => l.scrollWidth)) + layoutInfo.verticalScrollbarWidth 
+    : 0;
+```
+
+## Impact
+
+- **Performance**: Eliminates forced layout recalculations by using fresh scroll width values that were already computed during rendering
+- **Accuracy**: Ensures minimum content width calculation reflects the actual current DOM state
+- **User Experience**: Reduces scroll stuttering and frame drops when sticky scroll is enabled
+- **Minimal Risk**: Only 3 lines changed, preserving all existing functionality
+
+The fix ensures that during sticky scroll updates, we use the scroll width values from the current rendering cycle instead of potentially accessing removed DOM elements.
+
+Fixes #191973.
+
+> [!WARNING]
+>
+> <details>
+> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>
+>
+> #### I tried to connect to the following addresses, but was blocked by firewall rules:
+>
+> - `electronjs.org`
+>   - Triggering command: `node-gyp                                                                           ` (dns block)
+>
+> If you need me to access, download, or install something from one of these locations, you can either:
+>
+> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled
+> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)
+>
+> </details>
+
+
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,open,2025-06-24T21:09:26Z,,,41881900,https://api.github.com/repos/microsoft/vscode,https://github.com/microsoft/vscode/pull/252342,28,1.0,True
+3136041106,14760,Fix scroll wheel responsiveness in Windows App SDK by using system scroll settings,"## Problem
+
+Scroll wheel behavior in React Native Windows using the new architecture (Windows App SDK) was significantly less responsive compared to the WinUI 3 Gallery app and other native Windows applications. Users reported that scrolling felt sluggish and required much more effort, with fewer lines scrolled per wheel notch than expected.
+
+## Root Cause
+
+The `OnPointerWheelChanged` method in `ScrollViewComponentView.cpp` was using the raw mouse wheel delta (typically 120 per notch) multiplied only by `pointScaleFactor`, completely ignoring Windows system settings for wheel scroll behavior that users configure in their system preferences.
+
+## Solution
+
+This PR implements system-aware scroll wheel calculation that respects Windows user preferences:
+
+1. **Added `GetSystemWheelScrollLines()` helper function** that retrieves the user's configured ""lines per wheel notch"" setting using `SystemParametersInfo(SPI_GETWHEELSCROLLLINES, ...)`
+
+2. **Updated scroll calculation** to use proper line-based scrolling:
+   ```cpp
+   // Before: Raw delta approach
+   scrollDown(-delta * m_layoutMetrics.pointScaleFactor, true)
+   
+   // After: System-aware line-based approach  
+   const float notches = delta / 120.0f;
+   const float linesToScroll = notches * systemLinesPerNotch * c_scrollerLineDelta * m_layoutMetrics.pointScaleFactor;
+   scrollDown(-linesToScroll, true)
+   ```
+
+3. **Math comparison**:
+   - **Before**: 120 pixels per notch (regardless of user preferences)
+   - **After**: ~48 pixels per notch with default 3-line setting, ~80 pixels with 5-line setting
+   - Properly scales with DPI and respects user's accessibility needs
+
+## Benefits
+
+- ✅ **Responsive scrolling**: Matches native Windows application behavior
+- ✅ **User preference aware**: Respects system scroll wheel settings
+- ✅ **Accessibility friendly**: Works with custom line counts for users with mobility needs
+- ✅ **DPI aware**: Maintains proper scaling on high-DPI displays
+- ✅ **Minimal impact**: Only 7 lines of code changed, no breaking changes
+
+## Testing
+
+Validated the mathematical logic with various scenarios:
+- Standard 3-line setting: 48 pixels per notch
+- High accessibility 5-line setting: 80 pixels per notch  
+- High DPI (1.5x): 72 pixels per notch with 3-line setting
+- Backward scrolling: Proper negative values
+
+Fixes #14653.
+
+> [!WARNING]
+>
+> <details>
+> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>
+>
+> #### I tried to connect to the following addresses, but was blocked by firewall rules:
+>
+> - `googlechromelabs.github.io`
+>   - Triggering command: `/usr/local/bin/node install.mjs ` (dns block)
+> - `https://storage.googleapis.com/chrome-for-testing-public/130.0.6723.116/linux64/chrome-headless-shell-linux64.zip`
+>   - Triggering command: `/usr/local/bin/node install.mjs ` (http block)
+> - `https://storage.googleapis.com/chrome-for-testing-public/130.0.6723.116/linux64/chrome-linux64.zip`
+>   - Triggering command: `/usr/local/bin/node install.mjs ` (http block)
+>
+> If you need me to access, download, or install something from one of these locations, you can either:
+>
+> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled
+> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)
+>
+> </details>
+",Copilot,198982749,Copilot,closed,2025-06-11T08:58:57Z,2025-07-14T15:23:48Z,,48009214,https://api.github.com/repos/microsoft/react-native-windows,https://github.com/microsoft/react-native-windows/pull/14760,28,1.0,True
+3099021790,157,Add debounced QR code updates,Resolves #138 ,OpenAI_Codex,35736525,lyqht,closed,2025-05-29T03:03:18Z,2025-05-29T03:05:49Z,2025-05-29T03:05:49Z,630944068,https://api.github.com/repos/lyqht/mini-qr,https://github.com/lyqht/mini-qr/pull/157,28,1.0,False
+3186657928,89,Improve tray icon update frequency,"## Summary
+- refresh the tray icon only every 5 seconds
+",OpenAI_Codex,39589028,eplatonoff,closed,2025-06-29T22:49:27Z,2025-07-04T14:50:39Z,,214868921,https://api.github.com/repos/eplatonoff/pilorama,https://github.com/eplatonoff/pilorama/pull/89,28,1.0,False
+3184703163,499,Implement debounce and smooth updates for share search,"## Summary
+- debounce search requests in share sidebar tab
+- update share search list in-place to prevent flashing
+- log change in CHANGELOG
+
+## Testing
+- `vendor/bin/phpunit --configuration phpunit.xml` *(fails: file not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685f9cf48c8c8333ba3a6f90633f6a72",OpenAI_Codex,13385119,Rello,closed,2025-06-28T07:49:13Z,2025-06-28T07:50:55Z,2025-06-28T07:50:55Z,213728552,https://api.github.com/repos/Rello/analytics,https://github.com/Rello/analytics/pull/499,28,1.0,False
+3119752724,25,Improve input tracking with debouncing,"## Summary
+- debounce uiohook events for smoother ComputerAction logs
+- coalesce mouse move events into `trace_mouse`
+- coalesce keyboard input into `type_keys`
+
+## Testing
+- `npm install --ignore-scripts`
+- `npm run build`
+- `npm test` *(fails: no tests found)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_6840f279e8c08329b1fc8e9addebc0dc",OpenAI_Codex,868976,atupem,closed,2025-06-05T03:55:44Z,2025-06-12T04:01:21Z,,926709003,https://api.github.com/repos/bytebot-ai/bytebot,https://github.com/bytebot-ai/bytebot/pull/25,28,1.0,False
+3240335886,1599,Implement redraw debounce,"## Summary
+- debouce redraw events so repeated requests don't overwhelm the terminal
+- add `RequestRedraw` event and schedule redraws after 100ms
+
+## Testing
+- `cargo clippy --tests`
+- `cargo test` *(fails: Sandbox Denied errors in landlock tests)*
+
+------
+https://chatgpt.com/codex/tasks/task_i_68792a65b8b483218ec90a8f68746cd8",OpenAI_Codex,219906144,aibrahim-oai,closed,2025-07-17T17:18:15Z,2025-07-17T19:54:55Z,2025-07-17T19:54:55Z,965415649,https://api.github.com/repos/openai/codex,https://github.com/openai/codex/pull/1599,28,1.0,False
+3093078361,527,Fix per-input refresh debouncing,"## Summary
+- handle refresh rate limiting per input descriptor in `InputsTab`
+
+## Testing
+- `dotnet build Elsa.Studio.sln -c Release` *(fails: Unable to load the service index for source https://api.nuget.org/v3/index.json)*",OpenAI_Codex,938393,sfmskywalker,closed,2025-05-27T08:19:55Z,2025-05-27T08:21:30Z,2025-05-27T08:21:30Z,622646426,https://api.github.com/repos/elsa-workflows/elsa-studio,https://github.com/elsa-workflows/elsa-studio/pull/527,28,1.0,False
+3267083771,955,Prevent duplicate refresh-frame intervals,"## Summary
+- track refresh-frame interval id
+- reuse same interval to avoid starting many refresh timers
+- clear the interval when processing finishes
+- refresh every 5 seconds to reduce server load
+
+## Testing
+- `cargo test --workspace --exclude integration-testing --exclude rag-engine`
+
+------
+https://chatgpt.com/codex/tasks/task_e_688607b4d6208320b85f6eb671944bd8",OpenAI_Codex,173255911,242816,closed,2025-07-27T12:59:42Z,2025-07-28T06:41:50Z,2025-07-28T06:41:50Z,663396489,https://api.github.com/repos/bionic-gpt/bionic-gpt,https://github.com/bionic-gpt/bionic-gpt/pull/955,28,1.0,False
+3027146476,1321,Fix lag in pyplot example by implementing proper debouncing,"# Fix lag in pyplot example by implementing proper debouncing
+
+## Description
+This PR fixes lag in the pyplot example in the documentation by properly implementing debouncing using Reflex's built-in mechanism. The implementation:
+
+- Uses the `.debounce()` method on event handlers to add a 1.2 second debounce delay
+- Removes unnecessary custom debouncing code with asyncio and time tracking
+- Simplifies the event handlers for better readability
+
+## Testing
+- Tested locally with the development server
+- Verified that the debouncing works correctly with the slider and randomize button
+- Tested with different numbers of points to ensure smooth performance
+- Confirmed no errors in the console
+
+Link to Devin run: https://app.devin.ai/sessions/61b87a6c1a0645b2b5da2ba4487d16fd
+Requested by: Alek Petuskey (alek@reflex.dev)
+",Devin,158243242,devin-ai-integration[bot],closed,2025-04-29T06:00:35Z,2025-04-30T03:19:28Z,,577975610,https://api.github.com/repos/reflex-dev/reflex-web,https://github.com/reflex-dev/reflex-web/pull/1321,28,1.0,False
+3027244028,1323,Add debounce to pyplot example Randomize button,"# Add debounce to pyplot example Randomize button
+
+## Description
+This PR adds a debounce to the Randomize button in the pyplot example to reduce lag when processing data. The implementation:
+
+- Uses the `.debounce(1200)` method on the Randomize button's on_click event handler to add a 1.2 second debounce delay
+- Keeps the implementation simple and focused on just the button that needs debouncing
+
+## Testing
+- Tested locally with the development server
+- Verified that the debouncing works correctly with the Randomize button
+- Confirmed no errors in the console
+
+Link to Devin run: https://app.devin.ai/sessions/61b87a6c1a0645b2b5da2ba4487d16fd
+Requested by: Alek Petuskey (alek@reflex.dev)
+",Devin,158243242,devin-ai-integration[bot],closed,2025-04-29T06:44:29Z,2025-04-29T06:45:06Z,,577975610,https://api.github.com/repos/reflex-dev/reflex-web,https://github.com/reflex-dev/reflex-web/pull/1323,28,1.0,False
+2920951577,1064,feat: improve search functionality with pagination and visual feedback,"Closes #1063
+
+This PR improves the search functionality in the dashboard by adding pagination and visual feedback during search operations.
+
+## Changes
+- Implemented pagination in AppTable.vue for better performance with large datasets
+- Added multi-term search support for more flexible filtering
+- Added visual feedback during search operations with a spinner icon
+- Optimized debounce timing for search input from 500ms to 300ms
+- Ensured the search works for both app name and bundleid
+
+## Testing
+- Verified that typing in the search box filters apps by name
+- Verified that typing a bundleid in the search box filters apps by bundleid
+- Tested with multiple search terms to ensure filtering works correctly
+- Tested pagination with large datasets to ensure performance is acceptable
+
+Link to Devin run: https://app.devin.ai/sessions/96be49775cff44bbb1c32785a78c3041
+Requested by: User",Devin,158243242,devin-ai-integration[bot],closed,2025-03-14T18:07:04Z,2025-03-15T05:36:51Z,,442321089,https://api.github.com/repos/Cap-go/capgo,https://github.com/Cap-go/capgo/pull/1064,28,0.1005530548281581,False
+2920955200,1065,feat(dashboard): add improved app filtering with bundle ID support,"# Add search and filtering functionality to the dashboard for apps
+
+## Changes
+- Enhanced search algorithm to support multi-term filtering
+- Added special syntax for bundle ID filtering (`bundle:` or `id:` prefix)
+- Optimized MAU number loading to only fetch data for visible/filtered apps
+- Adjusted debounce timing for better performance with large datasets
+- Updated search placeholder to indicate bundle ID filtering capability
+
+## Performance Improvements
+1. **Search Algorithm Enhancement**
+   - Split search terms by spaces to allow searching for multiple terms
+   - Implemented AND logic for better filtering precision
+   - Added special syntax for bundle ID filtering
+
+2. **MAU Loading Optimization**
+   - Implemented caching to avoid redundant API calls
+   - Only load MAU numbers for filtered/visible apps
+   - Reduced unnecessary data fetching
+
+3. **Debounce Timing Adjustment**
+   - Increased from 500ms to 800ms for smoother experience with large datasets
+
+## Testing
+- Tested locally with the development server
+- Verified search functionality works for both app name and bundle ID filtering
+- Confirmed performance improvements with large datasets
+
+## Related Issue
+Fixes #1056
+
+Link to Devin run: https://app.devin.ai/sessions/82f2233b49da4015a0dc8cb4c717b243
+",Devin,158243242,devin-ai-integration[bot],closed,2025-03-14T18:08:42Z,2025-03-15T05:37:21Z,,442321089,https://api.github.com/repos/Cap-go/capgo,https://github.com/Cap-go/capgo/pull/1065,28,0.08534654194245879,False
+2920983723,1066,perf: optimize MAU loading mechanism for better performance with large datasets,"Closes #1063
+
+This PR optimizes the MAU loading mechanism to improve performance with large datasets.
+
+## Changes
+- Replaced individual API calls with a single bulk API call using getAppMetrics
+- Implemented caching for MAU numbers to avoid redundant API calls
+- Added loading state for MAU numbers to provide visual feedback
+- Optimized watchEffect to avoid unnecessary API calls
+
+## Testing
+- Verified that MAU numbers are displayed correctly after optimization
+- Tested with a large number of apps to ensure performance is acceptable
+- Tested on mobile screen sizes to ensure it works on smaller devices
+- Tested with different search terms to ensure filtering works correctly
+
+Link to Devin run: https://app.devin.ai/sessions/38a38f81d3f9427ebfa20151e4889e7a
+Requested by: User",Devin,158243242,devin-ai-integration[bot],closed,2025-03-14T18:19:38Z,2025-03-15T05:38:03Z,,442321089,https://api.github.com/repos/Cap-go/capgo,https://github.com/Cap-go/capgo/pull/1066,28,0.07567980502409305,False
+3071076936,4054,"feat: Server-side pagination, filtering and search for eval results table","## Summary
+In order to support large evals we're updating the Results View to do server side filtering, pagination and search.
+
+- Introduced a new endpoint `eval/table/:id` since this is a new results format
+- Eval comparisons are done server side too
+- Added indicies to support search and filtering
+- Added filtering dropdown for named scores
+- Created a single hook to fetch eval data
+
+
+
+<!-- ELLIPSIS_HIDDEN -->
+
+----
+
+> [!IMPORTANT]
+> This pull request implements server-side pagination for evaluation results, adds a new API endpoint, and updates the frontend to support dynamic data loading and filtering.
+> 
+>   - **Behavior**:
+>     - Implements server-side pagination for evaluation results in `Eval` model.
+>     - Adds `/api/eval/:id/table` endpoint to fetch paginated data.
+>     - Supports filtering by errors, failures, passes, highlights, and specific metrics.
+>     - Allows search queries across multiple fields.
+>     - Handles SQL injection attempts safely.
+>   - **Frontend**:
+>     - Updates `ResultsTable` to load pages dynamically.
+>     - Introduces `useEvalData` hook for fetching evaluation data.
+>     - Adds metric filtering and search functionality in `ResultsView`.
+>   - **Database**:
+>     - Adds indices to `eval_results` table for improved query performance.
+>     - Updates `evals` table schema to include `vars` column.
+>   - **Tests**:
+>     - Comprehensive tests for pagination, filtering, and search functionalities in `eval.test.ts`.
+>     - Tests for `EvalFactory` to create varied evaluation results for testing.
+> 
+> <sup>This description was created by </sup>[<img alt=""Ellipsis"" src=""https://img.shields.io/badge/Ellipsis-blue?color=175173"">](https://www.ellipsis.dev?ref=promptfoo%2Fpromptfoo&utm_source=github&utm_medium=referral)<sup> for eaf8c2c7eb7e99ff7edbd895c7992da8fa92723b. You can [customize](https://app.ellipsis.dev/promptfoo/settings/summaries) this summary. It will automatically update as commits are pushed.</sup>
+
+<!-- ELLIPSIS_HIDDEN -->",OpenAI_Codex,1080611,sklein12,closed,2025-05-17T21:29:21Z,2025-05-24T21:08:39Z,2025-05-24T21:08:39Z,633927609,https://api.github.com/repos/promptfoo/promptfoo,https://github.com/promptfoo/promptfoo/pull/4054,28,0.07423097696107485,False

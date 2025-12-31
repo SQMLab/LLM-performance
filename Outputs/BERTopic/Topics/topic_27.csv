@@ -1,0 +1,286 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3155815373,641,Make benchmarks only run with release builds,"This PR enforces that benchmarks can only be run with release builds, preventing execution with debug builds which would provide inconsistent and misleading performance data.
+
+## Changes Made
+
+### 1. Updated Justfile Commands
+- Removed `target` parameter from `bench` and `bench-ci` commands
+- Hard-coded both commands to use `--profile=release`
+- Added explanatory comments about release-only requirement
+
+**Before:**
+```just
+bench target=default-target features="""":
+    cargo bench --profile={{ if target == ""debug"" { ""dev"" } else { target } }} {{ if features =="""" {''} else { ""--features "" + features } }} -- --verbose
+```
+
+**After:**
+```just
+# Benchmarks only run with release builds for performance consistency  
+bench features="""":
+    cargo bench --profile=release {{ if features =="""" {''} else { ""--features "" + features } }} -- --verbose
+```
+
+### 2. Added Compile-Time Enforcement
+Added a compile-time check in the benchmark source code that prevents compilation in debug mode:
+
+```rust
+// Benchmarks are only meaningful and should only run with release builds.
+// Debug builds have different performance characteristics and would not provide
+// useful benchmarking data for performance regression testing.
+#[cfg(debug_assertions)]
+compile_error!(""Benchmarks must be run with release builds only. Use `cargo bench --release` or `just bench`."");
+```
+
+### 3. Updated GitHub Workflows
+- **Benchmarks.yml**: Removed `release` parameter from `bench-ci` call (now defaults to release)
+- **dep_rust.yml**: Removed `${{ matrix.config }}` parameter from `bench-ci` call (already had release-only guard)
+
+### 4. Updated Documentation
+Updated `docs/benchmarking-hyperlight.md` to reflect that only release builds are supported, removing references to debug benchmark support.
+
+## Validation
+
+All changes have been tested to ensure:
+- ✅ Debug benchmark compilation fails with clear error message
+- ✅ Release benchmark compilation succeeds  
+- ✅ `just bench` and `just bench-ci` commands use release profile
+- ✅ GitHub workflows updated correctly
+- ✅ All existing functionality preserved
+
+This ensures benchmarks provide consistent, meaningful performance data for regression testing while preventing accidental execution with debug builds.
+
+Fixes #638.
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💬 Share your feedback on Copilot coding agent for the chance to win a $200 gift card! Click [here](https://survey.alchemer.com/s3/8343779/Copilot-Coding-agent) to start the survey.",Copilot,198982749,Copilot,closed,2025-06-18T07:37:33Z,2025-07-29T23:00:13Z,,883829350,https://api.github.com/repos/hyperlight-dev/hyperlight,https://github.com/hyperlight-dev/hyperlight/pull/641,27,1.0,True
+3187736538,4150,Update benchmarks,"## Summary
+- rerun benchmarks via `make bench`
+- update `bench/out` files
+- refresh `BENCHMARK.md`
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686252cb92a08320b525a10e7b7ebbd7",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T09:10:51Z,2025-06-30T09:11:37Z,2025-06-30T09:11:36Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4150,27,1.0,False
+3185733825,3931,Run benchmarks,"## Summary
+- update benchmark results in BENCHMARK.md
+- refresh precompiled benchmark sources in `bench/out`
+- skip C benchmark generation for join tests
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6860bc5f507883209fe3f108addf0b8d",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T04:22:48Z,2025-06-29T09:04:45Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3931,27,1.0,False
+3118392412,60,Update benchmark labels,"## Summary
+- use more descriptive language labels in benchmark results
+- rerun benchmarks
+
+## Testing
+- `go test ./...`
+- `go run ./cmd/mochi-bench`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68407156a6808320b1bf3b50a8fb7fcc",OpenAI_Codex,1218621,tamnd,closed,2025-06-04T16:19:15Z,2025-06-04T16:19:31Z,2025-06-04T16:19:31Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/60,27,1.0,False
+3168842951,2739,Regenerate benchmarks,"## Summary
+- regenerate benchmark outputs
+- update benchmark report
+- rename `Mochi` Go implementation label to `Mochi (Go)`
+
+## Testing
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6859830b7b908320861258a634ae1848",OpenAI_Codex,1218621,tamnd,closed,2025-06-23T16:57:27Z,2025-06-23T17:30:25Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2739,27,1.0,False
+3168819278,2736,Regenerate benchmarks and adjust Go label,"## Summary
+- rerun benchmarks and update BENCHMARK.md
+- regenerate benchmark output files
+- rename Go benchmark label to `Mochi (Go)`
+
+## Testing
+- `go test ./types`
+- `go run ./cmd/mochi-bench > /tmp/bench.log`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68598306e0948320be0f9896b90076ec",OpenAI_Codex,1218621,tamnd,closed,2025-06-23T16:47:41Z,2025-06-23T16:47:57Z,2025-06-23T16:47:57Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2736,27,1.0,False
+3078500498,24,Improve benchmark stability,"## Summary
+- benchmark each scenario 20 times and average results
+- note repeated runs in README
+
+## Testing
+- `npm test`",OpenAI_Codex,11973041,felixtrz,closed,2025-05-21T00:11:04Z,2025-05-21T02:54:01Z,,720999772,https://api.github.com/repos/elixr-games/elics,https://github.com/elixr-games/elics/pull/24,27,1.0,False
+3176300978,3266,Update benchmarks and remove interpreter,"## Summary
+- re-run benchmarks
+- drop interpreter from benchmark runs
+- rename `sum` to `sum_loop` in benchmark template to avoid builtin conflict
+
+## Testing
+- `make bench`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685c2570de80832084386dd878106190",OpenAI_Codex,1218621,tamnd,closed,2025-06-25T16:45:54Z,2025-06-25T16:47:29Z,2025-06-25T16:47:29Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3266,27,1.0,False
+3116414631,18,Update benchmarks to run only Mochi,"## Summary
+- update runner to only execute Mochi templates
+- build mochi path detection and skip matrix_mul
+- add `bench` command to Makefile
+- fix mutability in benchmark templates
+
+## Testing
+- `go test ./...`
+- `make bench`
+
+------
+https://chatgpt.com/codex/tasks/task_e_683fcea927308320805c6ba4918d76f2",OpenAI_Codex,1218621,tamnd,closed,2025-06-04T04:52:41Z,2025-06-04T04:53:09Z,2025-06-04T04:53:09Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/18,27,1.0,False
+3146399914,118,Improve sparse buffer multiplication,"## Summary
+- add threaded buffer implementation with five-argument scaling
+- allow benchmarking with a buffer that stores additional zero entries
+- update benchmark output
+
+## Testing
+- `julia -t auto benchmark/sparse_buffer_mult.jl | tee benchmark/sparse_buffer_mult_output.txt` *(interrupted)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_684b2fd24fd4832fb24bbb8a81955d53",OpenAI_Codex,13523097,thorek1,open,2025-06-14T17:31:20Z,,,571475096,https://api.github.com/repos/thorek1/MacroModelling.jl,https://github.com/thorek1/MacroModelling.jl/pull/118,27,1.0,False
+3117720862,37,Add TS benchmark via compiler,"## Summary
+- add Mochi -> TypeScript compilation step to benchmarks
+- run TypeScript benchmark via Deno
+- drop manually written TypeScript templates
+
+## Testing
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68403eee0bdc832081c6876c6178ce89",OpenAI_Codex,1218621,tamnd,closed,2025-06-04T12:49:07Z,2025-06-04T12:49:23Z,2025-06-04T12:49:23Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/37,27,0.2714212288042909,False
+3118377413,59,Adjust benchmark units to microseconds,"## Summary
+- switch benchmark templates from milliseconds to microseconds
+- update runner to handle `duration_us` and display µs
+- regenerate benchmark outputs and markdown
+
+## Testing
+- `make bench`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68406f873bdc8320aceda5eda15aac64",OpenAI_Codex,1218621,tamnd,closed,2025-06-04T16:13:47Z,2025-06-04T16:14:03Z,2025-06-04T16:14:03Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/59,27,0.2158720259073532,False
+3117777345,39,Improve ts benchmarks timing,"## Summary
+- use `performance.now()` for `now()` in TS
+- update generated benchmark outputs
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6840443a5db483209d77f6eb8823bf9d",OpenAI_Codex,1218621,tamnd,closed,2025-06-04T13:07:39Z,2025-06-04T13:08:06Z,2025-06-04T13:08:06Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/39,27,0.19698957398540778,False
+3106031006,411,Improve clock performance,"## Summary
+- optimize `clock::now` and duration helpers using shell arithmetic
+- use these optimised values in runner
+- adjust unit tests for the new behaviour
+- add a new test to cover `EPOCHREALTIME`
+",OpenAI_Codex,5256287,Chemaclass,closed,2025-05-31T21:04:14Z,2025-06-03T22:40:20Z,,686916383,https://api.github.com/repos/TypedDevs/bashunit,https://github.com/TypedDevs/bashunit/pull/411,27,0.16142287827451735,False
+3124089438,12,Optimize interrupt polling,"## Summary
+- clean up halt release comment and remove TODO
+- prefetch interrupt flags and reuse for halt and handler checks
+- use pending flags to branch on interrupts instead of multiple MMU calls
+
+## Testing
+- `cargo bench --bench cpu --quiet` before change: ~1.86 ms
+- `cargo bench --bench cpu --quiet` after change: ~1.90 ms
+
+Codex couldn't run certain commands due to environment limitations. Consider configuring a setup script or internet access in your Codex environment to install dependencies.
+
+------
+https://chatgpt.com/codex/tasks/task_e_684086e0bca883289b871c522e3a259e
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+## Summary by CodeRabbit
+
+- **New Features**
+  - Added a new CPU benchmarking tool to measure CPU cycle performance.
+
+- **Refactor**
+  - Improved and simplified CPU interrupt handling logic for better efficiency and clarity.
+
+- **Tests**
+  - Introduced unit tests to verify interrupt handling and CPU halt state behavior.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->",OpenAI_Codex,25441,joamag,closed,2025-06-06T08:43:51Z,2025-06-07T11:40:44Z,2025-06-07T11:40:44Z,565750987,https://api.github.com/repos/joamag/boytacean,https://github.com/joamag/boytacean/pull/12,27,0.14769232460545992,True
+3116788481,11,Implement HBlank DMA timing,"## Summary
+- implement proper HBlank DMA transfers
+- expose HDMA_CYCLES_PER_BLOCK constant
+- enable HBlank DMA in MMU clock
+- add unit test covering timing behaviour
+
+## Testing
+- `cargo test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_683ff1db20848328bba9144784fc3419
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+## Summary by CodeRabbit
+
+- **New Features**
+	- Improved HBlank DMA handling to accurately transfer data in 16-byte blocks during HBlank periods, aligning with expected timing behavior.
+	- Added a screen clearing function with optional full frame buffer reset for better display control.
+- **Bug Fixes**
+	- Corrected bitmask usage for HDMA mode selection to ensure proper operation.
+- **Tests**
+	- Added tests to verify timing and correctness of HBlank DMA transfers.
+	- Added tests for General DMA transfer timing and completion.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->",OpenAI_Codex,25441,joamag,closed,2025-06-04T07:23:22Z,2025-06-04T17:32:24Z,2025-06-04T17:32:24Z,565750987,https://api.github.com/repos/joamag/boytacean,https://github.com/joamag/boytacean/pull/11,27,0.12822396016026308,True
+3155310952,2057,feat: switch lint:tsc from tsc to tsgo (@typescript/native-preview),"# Switch TypeScript linter from tsc to tsgo (@typescript/native-preview)
+
+This PR migrates the TypeScript linting from the traditional `tsc` compiler to the new native TypeScript implementation `tsgo` from `@typescript/native-preview`.
+
+## Changes Made
+
+### Package Installation
+- Added `@typescript/native-preview` as a devDependency at the root level
+
+### Script Updates
+Updated `lint:tsc` scripts in 12 packages to use `tsgo --noEmit` instead of `tsc --noEmit`:
+- `@liam-hq/app`
+- `@liam-hq/docs` 
+- `@liam-hq/cli`
+- `@liam-hq/db-structure`
+- `@liam-hq/erd-core`
+- `@liam-hq/ui`
+- `@liam-hq/pglite-server`
+- `@liam-hq/agent`
+- `@liam-hq/db`
+- `@liam-hq/github`
+- `@liam-hq/jobs`
+- `@liam-hq/mcp-server`
+
+### TypeScript Configuration Updates
+Removed `baseUrl: "".""` configurations from 3 tsconfig.json files as tsgo doesn't support this setting:
+- `frontend/apps/docs/tsconfig.json`
+- `frontend/packages/pglite-server/tsconfig.json`
+- `frontend/packages/erd-core/tsconfig.json`
+
+## Benefits
+
+- **Performance**: tsgo provides up to 10x speed improvement on most projects
+- **Native Implementation**: Uses a natively-compiled TypeScript compiler
+- **Future-Ready**: Aligns with Microsoft's direction for TypeScript tooling
+
+## Testing
+
+- Verified `tsgo --version` works correctly
+- Tested individual `pnpm lint:tsc` commands in sample packages
+- All existing TypeScript configurations remain compatible
+
+## References
+
+- [TypeScript Native Previews Announcement](https://devblogs.microsoft.com/typescript/announcing-typescript-native-previews/)
+- Related to GitHub issue #4607
+
+## Link to Devin run
+https://app.devin.ai/sessions/e5e9b9944a764bccaf8cdf3932f6d8a9
+
+**Requested by:** hirotaka.miyagi@route06.co.jp
+",Devin,158243242,devin-ai-integration[bot],closed,2025-06-18T03:08:18Z,2025-06-19T08:53:38Z,,839216423,https://api.github.com/repos/liam-hq/liam,https://github.com/liam-hq/liam/pull/2057,27,0.11469554812992665,False

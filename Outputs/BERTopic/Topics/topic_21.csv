@@ -1,0 +1,212 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3186033939,3947,Optimize vm grouping,"## Summary
+- optimize group by by precalculating count
+- regenerate IR golden files
+
+## Testing
+- `go test ./...`
+- `go test -tags slow ./tests/vm -run TestVM_IR -update`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861129b9b388320b583fadf63b24343",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T10:35:42Z,2025-06-29T10:36:08Z,2025-06-29T10:36:08Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3947,21,1.0,False
+3186305413,3980,Optimize group by compilation,"## Summary
+- optimize VM compiler for group queries by storing group index separately
+- regenerate IR golden files
+
+## Testing
+- `go test -tags slow ./tests/vm -run TestVM_IR -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68616031fb8083209432cdba77413783",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:01:38Z,2025-06-29T16:01:50Z,2025-06-29T16:01:50Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3980,21,1.0,False
+3186318107,3988,Improve group by compilation,"## Summary
+- optimize VM group by compile logic to avoid extra index lookups
+- update IR golden files for group by tests
+
+## Testing
+- `make fmt`
+- `make test` *(fails: cc error: returnflag undeclared)*
+- `go test -tags=slow ./tests/vm -run TestVM_IR -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686163d459a8832091f5698d8a0d1d64",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:17:31Z,2025-06-29T16:17:47Z,2025-06-29T16:17:47Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3988,21,1.0,True
+3181712853,3698,Improve Swift compiler formatting,"## Summary
+- enhance EnsureSwiftFormat to attempt Swift install
+- trim trailing spaces in fallback formatter
+
+## Testing
+- `go test -tags slow ./compile/x/swift -run TestSwiftCompiler_GoldenOutput`
+- `go test -tags slow ./compile/x/swift -run TestSwiftCompiler_GoldenOutput -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_685e46d229e08320bc99de395423c183",OpenAI_Codex,1218621,tamnd,closed,2025-06-27T07:31:03Z,2025-06-27T07:46:09Z,2025-06-27T07:46:09Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3698,21,1.0,False
+3186332246,3994,Optimize group by algorithm,"## Summary
+- add `needItems` tracking to VM compiler to omit storing group items when unused
+- detect aggregate usage via new helpers in `queryutil.go`
+- conditionally accumulate group items only when required
+
+## Testing
+- `go test ./...`
+- `go test -tags slow ./tests/vm -update` *(fails: command timed out)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861673a3c788320a30d44672464ff34",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:36:41Z,2025-07-01T12:01:53Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3994,21,1.0,True
+3186370979,4001,Improve group by compile-time performance,"## Summary
+- optimize group-by query compilation by maintaining a list of groups during accumulation
+- regenerate IR outputs for group-by query tests
+
+## Testing
+- `go test -tags=slow ./tests/vm -run TestVM_IR -update` *(fails: no tests to run)*
+- `go test -tags=slow ./tests/vm -run group_by -update` *(fails: no tests to run)*
+- `go run ./cmd/mochi run --ir tests/vm/valid/group_by.mochi`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861717baa848320bd588c48309ebb1e",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T17:12:37Z,2025-06-29T17:28:05Z,2025-06-29T17:28:05Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4001,21,1.0,False
+3177801861,3422,Improve Zig backend grouping,"## Summary
+- optimize Zig query grouping with an `AutoHashMap`
+- update TPCH q1 generated Zig code
+- add Zig compiler output for TPCH q1 under dataset
+- update Zig backend tasks
+
+## Testing
+- `go test ./...` *(fails: lua test requires json library)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685cd9b5b95c8320b60a2c11924ac5ae",OpenAI_Codex,1218621,tamnd,closed,2025-06-26T05:34:37Z,2025-06-26T05:38:22Z,2025-06-26T05:38:22Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3422,21,1.0,False
+3187229759,4084,Improve VM sum handling,"## Summary
+- speed up `sum` on groups by checking the stored count
+- regenerate TPC-DS q1 IR
+- clarify q1 dataset comments
+
+## Testing
+- `go test ./tests/vm -tags slow -run TestVM_TPCDS/q1.mochi -v`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68621ea9039483208f671c2955bca4c8",OpenAI_Codex,1218621,tamnd,open,2025-06-30T05:46:25Z,,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4084,21,1.0,False
+3238720815,9252,Improve Swift compiler inference,"## Summary
+- improve Swift type inference for arithmetic expressions
+- avoid `_equal` helper in `test_block` generated output
+- update task progress notes
+
+## Testing
+- `go test ./compiler/x/swift -tags slow -run TestSwiftCompiler_VMValid_Golden/test_block -count=1`
+- `go test ./compiler/x/swift -tags slow -run TestSwiftCompiler_VMValid_Golden/update_stmt -count=1`
+- `go vet ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878b6c4cb3c8320933d65c1f4645f6c",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T08:50:58Z,2025-07-17T08:51:10Z,2025-07-17T08:51:09Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9252,21,1.0,False
+3219158589,7367,Improve Swift compiler,"## Summary
+- refine Swift code generation for grouped queries
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686fac0e09308320a100af9f653e14d7",OpenAI_Codex,1218621,tamnd,closed,2025-07-10T12:26:33Z,2025-07-10T12:26:47Z,2025-07-10T12:26:47Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7367,21,1.0,False
+3115186500,1069,Optimize group_match masking,"## Summary
+- optimize boolean selection generation in `group_match`
+
+## Testing
+- `pytest static_frame/test/unit/test_type_blocks.py::TestUnit::test_type_blocks_group_match_b -q`
+- `pytest static_frame/test/unit/test_type_blocks.py::TestUnit::test_type_blocks_group_match_c -q`
+- `pytest static_frame/test/unit/test_type_blocks.py::TestUnit::test_type_blocks_group_match_d -q`
+- `pytest static_frame/test/unit/test_type_blocks.py::TestUnit::test_type_blocks_group_match_e -q`
+- `pytest static_frame/test/unit/test_type_blocks.py::TestUnit::test_type_blocks_group_match_f -q`
+- `pytest static_frame/test/unit/test_type_blocks.py::TestUnit::test_type_blocks_group_sorted_d -q`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_683f4a25f6648332b235929991cd0db3",OpenAI_Codex,395503,flexatone,open,2025-06-03T19:30:02Z,,,116150224,https://api.github.com/repos/static-frame/static-frame,https://github.com/static-frame/static-frame/pull/1069,21,1.0,False
+3190320694,4340,Enable vm group append for tpc-ds,"## Summary
+- update group append logic in `runtime/vm` to avoid unnecessary slice copies
+- refresh golden IR output for TPC‑DS query q63
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686331ccc148832089976c24064a1e30",OpenAI_Codex,1218621,tamnd,closed,2025-07-01T01:10:01Z,2025-07-01T01:10:16Z,2025-07-01T01:10:16Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4340,21,0.08820013471406754,False
+3188781479,4228,Update tpc-ds IR outputs and improve union_all,"## Summary
+- optimize `union_all` to preallocate slice space
+- regenerate tpc-ds IR golden files (q1–q9)
+
+## Testing
+- `for i in {1..9}; do go test -tags slow ./tests/vm -run ""TestVM_TPCDS/q${i}.mochi""; done`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862a1c8adbc8320b2d18bdb50694436",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:50:07Z,2025-06-30T14:50:28Z,2025-06-30T14:50:28Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4228,21,0.07042599064046048,False
+3186063431,3950,Run vm tests and refresh IR outputs,"## Summary
+- improve peephole optimizer to avoid rewriting registers for mutating ops
+- regenerate IR for group_by_conditional_sum test
+- run runtime/vm tests
+
+## Testing
+- `go test ./runtime/vm -tags slow`
+- `go test ./tests/vm -tags slow -run TestVM_IR -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68611c3d11e88320b098d0ae31fd67d6",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T11:12:09Z,2025-07-01T03:06:10Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3950,21,0.05120051085588744,False
+3186331079,3993,Run job dataset update and improve VM peephole,"## Summary
+- regenerate JOB dataset IR using `runtime/vm`
+- optimize VM peephole pass to remove `Move` before `Return`
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686168e980b88320b0be529f35127990",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:35:09Z,2025-06-29T16:35:34Z,2025-06-29T16:35:34Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3993,21,0.04990685217828834,False
+3185688727,3925,Add unreachable code removal and update IR outputs,"## Summary
+- improve VM optimizations by removing unreachable instructions
+- ensure division or modulo operations remain for runtime errors
+- regenerate IR outputs for VM tests
+- add helper tool to update job dataset files
+
+## Testing
+- `go test ./tests/vm -tags slow -run TestVM_ErrorStackTrace -v`
+- `go test ./tests/vm -tags slow -run TestVM_TPCH -v`
+- `go test ./tests/vm -tags slow -run TestVM_JOB -v`
+- `go test ./tests/vm -tags slow -run TestVM_IR -v`
+- `go test ./tests/vm -tags slow`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6860a822ea04832084b620bf77df3355",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T02:57:50Z,2025-07-01T03:05:52Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3925,21,0.049894547115871664,True
+3186346363,3998,Update job tool and VM optimization,"## Summary
+- keep trailing newline when writing JOB dataset IR
+- propagate move results into `Expect` instructions for tighter VM code
+
+## Testing
+- `go vet ./...`
+- `go test ./runtime/vm -run TestDummy -count=1`
+- `go test ./tools/update_job -run TestDummy -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68616b6376008320994c097383441bf3",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:48:12Z,2025-07-01T12:01:46Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3998,21,0.0489150330514052,False
+3184493975,3880,Add profiling-guided optimization to VM,"## Summary
+- add `Profile` data structure to collect VM execution counts
+- track instruction counts during execution
+- provide optimization passes that remove cold instructions
+- expose helpers to compile with profiles
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685f5b8937308320ba4f11637d98cda1",OpenAI_Codex,1218621,tamnd,closed,2025-06-28T03:11:30Z,2025-06-30T03:19:34Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3880,21,0.04469266834028225,False
+3184492040,3879,Add peephole optimizations to VM,"## Summary
+- add peephole optimizer to remove redundant instructions and simplify arithmetic
+- document optimization pass in `runtime/vm` README
+
+## Testing
+- `go vet ./...`
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_685f5b33ff8483209f5c4718156d409f",OpenAI_Codex,1218621,tamnd,closed,2025-06-28T03:08:50Z,2025-06-30T03:19:28Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3879,21,0.040528000502528735,False

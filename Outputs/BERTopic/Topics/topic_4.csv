@@ -1,0 +1,593 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3254647682,59071,skip unnecessary alias-check in collect(::AbstractArray) from copyto\!,"As discussed on Slack with @MasonProtter & @jakobnissen, `collect` currently does a usually cheap - but sometimes expensive - aliasing check (via `unalias`->`mightalias`->`dataid` -> `objectid`) before copying contents over; this check is unnecessary, however, since the source array is newly created and cannot possibly alias the input.
+
+This PR fixes that by swapping from `copyto\!` to `copyto_unaliased\!` in the `_collect_indices` implementations where the swap is straightforward (e.g., it is not so straightforward for the fallback `_collect_indices(indsA, A)`, so I skipped it there).
+
+This improves the following example substantially:
+```julia
+struct GarbageVector{N} <: AbstractVector{Int}
+    v :: Vector{Int}
+    garbage :: NTuple{N, Int}
+end
+GarbageVector{N}(v::Vector{Int}) where N = GarbageVector{N}(v, ntuple(identity, Val(N)))
+Base.getindex(gv::GarbageVector, i::Int) = gv.v[i]
+Base.size(gv::GarbageVector) = size(gv.v)
+
+using BenchmarkTools
+v = rand(Int, 10)
+gv = GarbageVector{100}(v)
+@btime collect($v);  # 30 ns (v1.10.4)  -> 30 ns (PR)
+@btime collect($gv); # 179 ns (v1.10.4) -> 30 ns (PR)
+```
+
+Rebased version of JuliaLang/julia#55748
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>",Claude_Code,1814174,ChrisRackauckas,closed,2025-07-23T02:52:46Z,2025-07-23T23:55:54Z,,1644196,https://api.github.com/repos/JuliaLang/julia,https://github.com/JuliaLang/julia/pull/59071,4,1.0,False
+3138341820,2255,Optimize BigInt hex conversion,"## Summary
+- improve `BigInt::to_hex` performance by using `StringBuilder`
+
+## Testing
+- `moon info`
+- `moon test` *(fails: no output)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68499a1746208320b6d98eb4cbce0581",OpenAI_Codex,747051,bobzhang,closed,2025-06-11T23:21:52Z,2025-06-23T06:46:51Z,2025-06-23T06:46:51Z,749681472,https://api.github.com/repos/moonbitlang/core,https://github.com/moonbitlang/core/pull/2255,4,1.0,False
+3099945080,809,Optimize vector iteration,"## Summary
+- reduce overhead in RangeIterator
+",OpenAI_Codex,5256287,Chemaclass,closed,2025-05-29T10:50:20Z,2025-05-29T10:55:18Z,2025-05-29T10:55:18Z,257098489,https://api.github.com/repos/phel-lang/phel-lang,https://github.com/phel-lang/phel-lang/pull/809,4,1.0,False
+3104406142,823,Improve vector performance,"## Summary
+- cache tail size in `PersistentVector` and `TransientVector`
+- update tail size when modifying transient vectors
+",OpenAI_Codex,5256287,Chemaclass,closed,2025-05-30T22:38:34Z,2025-05-30T23:00:10Z,2025-05-30T23:00:10Z,257098489,https://api.github.com/repos/phel-lang/phel-lang,https://github.com/phel-lang/phel-lang/pull/823,4,1.0,False
+3183021016,20687,Implement array length minify optimization,"## Summary
+- optimize property accesses on array literals when minifying
+- add a bundler test for array length folding
+
+## Testing
+- `bun bd test test/bundler/bundler_minify.test.ts` *(fails: Configuring incomplete, errors occurred)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685ea751ffa4832886a1a0b55859074c",OpenAI_Codex,709451,Jarred-Sumner,closed,2025-06-27T14:21:26Z,2025-07-20T08:39:28Z,,357728969,https://api.github.com/repos/oven-sh/bun,https://github.com/oven-sh/bun/pull/20687,4,1.0,False
+3071827885,120,Improve string/comment parsing performance,"## Summary
+- avoid repeated concatenations while parsing strings and comments
+- accumulate characters in lists and join at the end
+
+## Testing
+- `python3 -m pytest -q` *(fails: No module named pytest)*",OpenAI_Codex,4247706,mangiucugna,closed,2025-05-18T14:27:00Z,2025-05-18T14:37:56Z,,688141049,https://api.github.com/repos/mangiucugna/json_repair,https://github.com/mangiucugna/json_repair/pull/120,4,1.0,False
+3137138306,2253,Optimize string operations,"## Summary
+- avoid creating intermediate strings by using `write_substring`
+- remove unused TODO comments in string methods
+- update array joining helpers to directly append views
+
+## Testing
+- `moon fmt`
+- `moon info`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6849936bc8548320a98083b692ec4327",OpenAI_Codex,747051,bobzhang,closed,2025-06-11T14:51:38Z,2025-06-11T15:33:27Z,2025-06-11T15:33:26Z,749681472,https://api.github.com/repos/moonbitlang/core,https://github.com/moonbitlang/core/pull/2253,4,1.0,False
+3220760486,299,Reduce memory allocations in display code,"## Summary
+- store timezone data as flash strings
+- place Serial message literals in flash using `F()`
+- store WebUI error messages in flash
+",OpenAI_Codex,2579336,jniebuhr,closed,2025-07-10T21:25:13Z,2025-07-13T17:03:05Z,2025-07-13T17:03:05Z,876327247,https://api.github.com/repos/jniebuhr/gaggimate,https://github.com/jniebuhr/gaggimate/pull/299,4,1.0,False
+3142207549,2265,Improve list rev_fold performance,"## Summary
+- avoid array allocation in list `rev_fold`
+- implement direct recursion for `rev_foldi`
+- run `moon fmt` and `moon info`
+
+## Testing
+- `moon fmt`
+- `moon info`
+
+------
+https://chatgpt.com/codex/tasks/task_e_684b84f0d1148320bbfa1f922c8f1f42",OpenAI_Codex,747051,bobzhang,closed,2025-06-13T04:24:38Z,2025-06-15T12:05:50Z,,749681472,https://api.github.com/repos/moonbitlang/core,https://github.com/moonbitlang/core/pull/2265,4,1.0,False
+3223281368,82,Use of generators to reduce memory usage via a LazyMultiSet,"Also converts almost all operators to use them wherever possible.
+
+We should benchmark this against main to see how what it does with the memory usage and allocations.",Cursor,31130,samwillis,open,2025-07-11T15:19:11Z,,,884778513,https://api.github.com/repos/electric-sql/d2ts,https://github.com/electric-sql/d2ts/pull/82,4,1.0,False
+3142406085,2266,Improve retain performance,"## Summary
+- refactor `Array::retain` to avoid repeated length lookups and reads
+
+## Testing
+- `moon fmt`
+- `moon info`
+- `moon check`
+- `moon test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_684ba864a968832085bc835c8821880c",OpenAI_Codex,747051,bobzhang,closed,2025-06-13T06:21:03Z,2025-06-13T07:36:47Z,2025-06-13T07:36:47Z,749681472,https://api.github.com/repos/moonbitlang/core,https://github.com/moonbitlang/core/pull/2266,4,1.0,False
+3141942061,2262,Optimize loops by caching length,"## Summary
+- optimize loops in `Bytes::to_array` and `Bytes` addition
+- reduce `length()` calls in array reversal functions
+- cache size in `Deque::to_array`
+
+## Testing
+- `moon fmt`
+- `moon info`
+- `moon check --verbose`
+- `moon test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_684ae1d2a7d483209a8fab3f9a02c07b",OpenAI_Codex,747051,bobzhang,closed,2025-06-13T01:11:54Z,2025-06-13T01:36:06Z,2025-06-13T01:36:06Z,749681472,https://api.github.com/repos/moonbitlang/core,https://github.com/moonbitlang/core/pull/2262,4,1.0,False
+3070936351,4050,chore: Improve memory usage when sharing results,"## Summary
+- add batched sample and counting helpers on `Eval`
+- stream results in `sendChunkedResults`
+",OpenAI_Codex,1080611,sklein12,closed,2025-05-17T17:00:54Z,2025-05-19T21:58:14Z,2025-05-19T21:58:14Z,633927609,https://api.github.com/repos/promptfoo/promptfoo,https://github.com/promptfoo/promptfoo/pull/4050,4,1.0,False
+3267314311,1489,Fix inference OOM by streaming dataset,"## Summary
+- avoid loading entire dataset in memory when running classification inference
+- stream input shards in batches and write results incrementally
+
+## Testing
+- `pytest tests/processing/tokenize -q`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68866679275483318b55e211a2a91eee",OpenAI_Codex,9633,dlwh,open,2025-07-27T18:17:29Z,,,775839592,https://api.github.com/repos/marin-community/marin,https://github.com/marin-community/marin/pull/1489,4,0.20033979554070716,False
+3138362649,1847,✨ feat: implement MODEXP precompile (EIP-198) with EIP-2565 gas optimization,"## Summary
+
+- Implements MODEXP precompile at address 0x05 
+- Full EIP-198 compliance with modular exponentiation
+- EIP-2565 gas calculation optimization
+- Comprehensive test suite with edge cases
+- Gas overflow protection and input validation
+
+## Key Features
+
+- Efficient gas calculation with complexity analysis
+- Proper handling of zero cases (0^0 = 1, base^0 = 1)
+- Input validation and DoS protection
+- Big-endian integer parsing for Ethereum compatibility
+- Comprehensive test coverage including edge cases
+
+## Test Results
+
+All Zig tests pass ()
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>",Claude_Code,35039927,roninjin10,closed,2025-06-11T23:40:21Z,2025-06-12T02:24:02Z,2025-06-12T02:24:02Z,601475124,https://api.github.com/repos/evmts/tevm-monorepo,https://github.com/evmts/tevm-monorepo/pull/1847,4,0.17625263893189844,False
+3264767865,1102,Optimize careless LM evaluation,"## Summary
+- incorporate `DataLoader` for text windows
+- store character ranges alongside examples
+- add configuration options to trade memory for throughput
+- batch suffix probability gathering to reduce host transfers
+
+## Testing
+- `python -m py_compile src/levanter/main/eval_careless_lm.py`
+- `pytest -q` *(fails: ImportError while importing tests)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68841b9691448327bde32d2d8d99cfb0",OpenAI_Codex,30680697,ahmeda14960,open,2025-07-26T00:44:55Z,,,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1102,4,0.16005414328572817,False
+3226180108,1056,Improve sample_lm generation,"## Summary
+- jit-loop the autoregressive decode in `sample_lm`
+- remove unused timing logic
+
+## Testing
+- `pre-commit run --all-files`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6872fb5b14248331a6da4edac2e82635",OpenAI_Codex,9633,dlwh,closed,2025-07-13T06:20:47Z,2025-07-19T06:39:31Z,,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1056,4,0.15589315126725276,False
+3225959128,1055,Avoid network downloads in tests,"## Summary
+- add `local_gpt2_tokenizer` fixture to load GPT2 tokenizer from local files
+- switch GPT2-using tests to rely on this fixture
+- use passthrough tokenizer for validation-set test
+
+## Testing
+- `pre-commit run --all-files`
+- `pytest tests/test_supervised.py tests/test_sft.py tests/test_text.py -m ""not entry and not slow and not ray""`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68719c180a4883319e292ffc9037e739",OpenAI_Codex,9633,dlwh,closed,2025-07-13T00:17:21Z,2025-07-13T16:23:35Z,2025-07-13T16:23:35Z,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1055,4,0.1545780874912973,False
+3200979351,1429,Optimize logits worker I/O,"## Summary
+- cut per-element conversions in sliding logits worker
+- store logits batches as record batches in Parquet
+- compute log-probs on device before moving tensors to CPU
+
+## Testing
+- `pre-commit run --files marin/generation/sliding_logits.py` *(fails: command not found)*
+- `pytest -q` *(fails: ModuleNotFoundError: No module named 'ray')*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6867227b07bc8327916802ace9a0cc74",OpenAI_Codex,30680697,ahmeda14960,closed,2025-07-04T00:58:38Z,2025-07-04T01:12:51Z,2025-07-04T01:12:51Z,775839592,https://api.github.com/repos/marin-community/marin,https://github.com/marin-community/marin/pull/1429,4,0.10933612122337304,False
+3189896520,1413,Add TPU-compatible logits inference,"## Summary
+- run compute_logits on TPU via XLA multiprocessing
+- write out per-core shards then merge
+- update forward logits tutorial
+
+## Testing
+- `pre-commit run --files marin/generation/logits.py experiments/tutorials/exp1350_forward_logits.py` *(fails: command not found)*
+- `pytest -q tests/quickstart-data` *(fails: ModuleNotFoundError: No module named 'ray')*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862ed00e7e883278bfe1292cfce04df",OpenAI_Codex,30680697,ahmeda14960,closed,2025-06-30T21:24:01Z,2025-06-30T21:24:29Z,2025-06-30T21:24:29Z,775839592,https://api.github.com/repos/marin-community/marin,https://github.com/marin-community/marin/pull/1413,4,0.10803105697780033,False
+3201015713,1431,Speed up P(z) and fix Parquet write,"## Summary
+- compute P(z) on device before transferring logits to CPU
+- build rows with explicit dtype to satisfy PyArrow
+
+## Testing
+- `ruff check --output-format concise marin/generation/sliding_logits.py`
+- `black --check marin/generation/sliding_logits.py`
+- `pytest -q` *(fails: ModuleNotFoundError: No module named 'ray')*
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6867227b07bc8327916802ace9a0cc74",OpenAI_Codex,30680697,ahmeda14960,closed,2025-07-04T01:20:53Z,2025-07-04T01:23:57Z,2025-07-04T01:23:57Z,775839592,https://api.github.com/repos/marin-community/marin,https://github.com/marin-community/marin/pull/1431,4,0.10595346880846346,False
+3079638107,11432,Allow ParticleBuffer to shrink buffers,"## Summary
+- extend `ParticleBufferOptions` with a `minSize` field
+- keep track of `_minSize` and reduce allocated space when particle counts drop
+- test ParticleBuffer growth and shrinkage behaviour
+
+## Testing
+- `npm test` *(fails: run-s not found)*",OpenAI_Codex,3112434,GoodBoyDigital,open,2025-05-21T09:52:11Z,,,7741856,https://api.github.com/repos/pixijs/pixijs,https://github.com/pixijs/pixijs/pull/11432,4,0.10457769845343233,False
+3203674177,380,Optimize dataset storage with pyarrow,"Implement PyArrow-based incremental checkpoint storage with deduplication to reduce disk usage and enhance debugging capabilities.
+
+Closes #221 
+
+Previously, DocETL stored complete intermediate datasets as separate JSON files for each operation, leading to significant storage redundancy and inefficient disk usage, particularly when data records were identical or overlapped across pipeline steps. This change introduces a new architecture that stores unique records once in a central PyArrow dataset and uses an index to reference them, drastically reducing the overall storage footprint. It also adds programmatic inspection tools and documentation for easier pipeline debugging.",Cursor,6224969,shreyashankar,closed,2025-07-04T20:45:02Z,2025-07-07T19:32:05Z,,826111692,https://api.github.com/repos/ucbepic/docetl,https://github.com/ucbepic/docetl/pull/380,4,0.09437043648120443,False
+3234031765,1066,Optimize page table slicing,"## Summary
+- optimize loops in page_table
+- slice updated sequences and token counts by num_active
+- update tests for new PageBatchInfo signature
+
+## Testing
+- `pre-commit run --files src/levanter/layers/page_table.py`
+- `pytest tests/test_page_table.py -q`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6876ec7ca3dc83318ce01950914aa611",OpenAI_Codex,9633,dlwh,closed,2025-07-16T00:16:42Z,2025-07-16T00:16:51Z,2025-07-16T00:16:50Z,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1066,4,0.0907192462249849,False
+3207776307,1040,Add paged decode helper to Llama transformer,"## Summary
+- add helper `_forward` to reuse logic between decoding calls
+- implement per-layer paged decode using the new helper
+- handle alternate axis names in `default_ragged_paged_attention`
+- rename variables flagged by ruff
+
+## Testing
+- `ruff check src/levanter/models/llama.py src/levanter/layers/attention.py`
+- `black src/levanter/models/llama.py src/levanter/layers/attention.py`
+- `pytest -q tests/test_paged_attention.py::test_ragged_paged_attention_single_seq -vv`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6868cef10c0c83318ca7130fcbfc9d96",OpenAI_Codex,9633,dlwh,closed,2025-07-07T06:56:16Z,2025-07-10T23:37:13Z,,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1040,4,0.08910566825800262,False
+3105888579,28,Use bumpalo for temporary buffers,"## Summary
+- add `bumpalo` dependency
+- use bump allocation in `RMinHash::update`
+- use bump allocation in `CMinHash::update`
+
+## Testing
+- `pytest -q` *(fails: ModuleNotFoundError: No module named 'rensa')*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683b49da1b988332b03db8bb012b50f9",OpenAI_Codex,61982523,beowolx,closed,2025-05-31T18:33:27Z,2025-05-31T18:53:04Z,,746306477,https://api.github.com/repos/beowolx/rensa,https://github.com/beowolx/rensa/pull/28,4,0.08801386436646223,False
+3220636286,1047,Add helper for ragged paged attention,"## Summary
+- gate optional TPU ragged paged attention import
+- introduce `ragged_paged_attention` helper to dispatch to TPU or reference code
+- use new helper from `paged_decode`
+
+## Testing
+- `pre-commit run --files src/levanter/layers/attention.py`
+- `pytest tests -m ""not entry and not slow and not ray""` *(fails: ModuleNotFoundError for jax, equinox, etc.)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_687023c7a5fc83319a642eb2548a03f7",OpenAI_Codex,9633,dlwh,closed,2025-07-10T20:41:57Z,2025-07-10T20:42:21Z,2025-07-10T20:42:21Z,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1047,4,0.08393443852070631,False
+3233988388,1065,Optimize PageTable allocation loop,"## Summary
+- page_table: iterate allocations only for updated sequences
+- skip allocation for invalid sequence IDs
+
+## Testing
+- `pre-commit run --files src/levanter/layers/page_table.py`
+- `pytest tests/test_paged_attention.py -k test_ragged_paged_attention_incremental_single_seq -vv` *(fails: ValueError during broadcasting)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6876e5422f2083318b8bb6b5937bbf81",OpenAI_Codex,9633,dlwh,closed,2025-07-15T23:48:19Z,2025-07-15T23:49:55Z,2025-07-15T23:49:55Z,496005961,https://api.github.com/repos/stanford-crfm/levanter,https://github.com/stanford-crfm/levanter/pull/1065,4,0.07781036819331172,False
+3125825544,293,Fix buffer mismatch check,"## Summary
+- optimize verification so buffer copies only occur when the read count is less than the buffer size
+
+## Testing
+- `./gradlew test --no-daemon` *(fails: unresolved Firebase references)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6843386496848320ba5de2416a851d8a",OpenAI_Codex,1151321,depau,closed,2025-06-06T20:44:10Z,2025-06-06T21:05:58Z,2025-06-06T21:05:58Z,147043230,https://api.github.com/repos/etchdroid/etchdroid,https://github.com/etchdroid/etchdroid/pull/293,4,0.0749957992278348,False
+3203264775,51,Fix unused buffer in floatWorker,"## Summary
+- remove unused buffer allocation in `FileSourceModule::floatWorker`
+
+## Testing
+- `g++ -std=c++17 -c source_modules/file_source/src/main.cpp -Icore/src -Isource_modules/file_source/src -Icore/src/dsp -Icore/src/utils -Icore/src/signal_path -Icore/src/gui -Idecoder_modules/radio/src` *(fails: imgui.h: No such file or directory)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6868012e344883278f5e3566ba7757cc",OpenAI_Codex,952071,sannysanoff,closed,2025-07-04T16:34:10Z,2025-07-04T18:00:46Z,2025-07-04T18:00:46Z,418222999,https://api.github.com/repos/sannysanoff/SDRPlusPlusBrown,https://github.com/sannysanoff/SDRPlusPlusBrown/pull/51,4,0.0720347034208583,False
+3116534114,686,Improve pooled buffer security,"## Summary
+- zero pooled Bytes only up to its written region
+- clarify buffer reuse guidance
+
+## Testing
+- `mvn -q verify` *(fails: command not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683fd207c44c8329bf681180cc5770ef",OpenAI_Codex,1070321,peter-lawrey,closed,2025-06-04T05:52:53Z,2025-06-04T06:50:37Z,,31261671,https://api.github.com/repos/OpenHFT/Chronicle-Bytes,https://github.com/OpenHFT/Chronicle-Bytes/pull/686,4,0.07083690157076812,False
+3146857680,143,Switch DeepEquals stack to ArrayDeque,"## Summary
+- switch stack in `deepEquals` and `deepHashCode` from `LinkedList` to `ArrayDeque`
+- update imports
+- add helper to insert collections into stack
+
+## Testing
+- `mvn -q test` *(fails: `mvn` not found)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_684dfa8f5374832a98fa248a2db0ddf5",OpenAI_Codex,5373774,jdereg,closed,2025-06-14T22:48:02Z,2025-06-14T22:48:25Z,2025-06-14T22:48:25Z,12670630,https://api.github.com/repos/jdereg/java-util,https://github.com/jdereg/java-util/pull/143,4,0.0677975517823656,False
+3048846835,11865,Make `set_len` a tokio-epoll-uring operation,"# Make `set_len` a tokio-epoll-uring operation
+
+Fixes #11817
+
+## Changes
+- Added a new `ftruncate` operation to the tokio-epoll-uring library
+- Updated the `set_len` method in `io_engine.rs` to use the new operation
+- Follows the same pattern as other operations like `fsync` and `fdatasync`
+
+## Testing
+- Ran unit tests with `cargo nextest run --workspace --exclude walproposer`
+
+Link to Devin run: https://app.devin.ai/sessions/1b08d1ef4cbe4872a0c46f7d01d6d490
+Requested by: christian@neon.tech
+",Devin,158243242,devin-ai-integration[bot],closed,2025-05-08T12:24:26Z,2025-05-08T12:55:44Z,,351806852,https://api.github.com/repos/neondatabase/neon,https://github.com/neondatabase/neon/pull/11865,4,0.06725778458179647,False
+3074502051,7794,Refactor verifyReplicationTasks,"## Summary
+- simplify verifyReplicationTasks logic for clarity
+- enable concurrent verification of replication tasks with configurable concurrency
+
+## Testing
+- `go test ./service/worker/migration/... -run Test_verifyReplicationTasks -count=1` *(fails: download go1.24.1 toolchain)*",OpenAI_Codex,3085410,meiliang86,open,2025-05-19T17:06:53Z,,,215654064,https://api.github.com/repos/temporalio/temporal,https://github.com/temporalio/temporal/pull/7794,4,0.06546836150000492,False
+3212206965,900,feat: add buffer pool for audio conversion,"## Summary
+This PR implements a float32 buffer pool for audio conversion operations, targeting the second memory allocation hotspot identified in our profiling analysis.
+
+## Changes
+- Implemented `Float32Pool` using `sync.Pool` for thread-safe buffer reuse
+- Modified `convert16BitToFloat32` to use the pool for standard buffer sizes
+- Added pool initialization during BirdNET startup
+- Implemented proper buffer lifecycle management with return after prediction
+- Added comprehensive unit tests, benchmarks, and fuzz tests
+- Created documentation explaining the implementation
+
+## Performance Impact
+```
+BenchmarkAudioConversionComparison/Original-16     4591    352197 ns/op    581647 B/op    1 allocs/op
+BenchmarkAudioConversionComparison/WithPool-16    12958     92816 ns/op        69 B/op    1 allocs/op
+```
+
+### Improvements:
+- **Memory allocation**: Reduced by 99.99% (581KB → 69 bytes)
+- **Performance**: 3.8x faster (352μs → 93μs)
+- **Hit rate**: 99.98% in steady state operation
+
+## Testing
+- ✅ Unit tests for pool operations and concurrency
+- ✅ Fuzz tests for conversion correctness
+- ✅ Benchmarks showing significant improvements
+- ✅ All linter issues resolved
+
+## Design Decisions
+1. **Standard size only**: Pool only handles standard 3-second buffers (144,384 samples)
+2. **Early return**: Buffers returned immediately after BirdNET prediction
+3. **Graceful fallback**: Non-standard sizes allocate normally
+4. **No clearing**: Audio data doesn't require security clearing
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+## Summary by CodeRabbit
+
+* **New Features**
+  * Introduced an optimized float32 buffer pool to improve memory efficiency during audio processing.
+  * Added automatic reuse of float32 buffers for 16-bit audio conversions, reducing memory allocations and potential garbage collection pauses.
+
+* **Documentation**
+  * Added detailed documentation on the float32 buffer pool, including usage, performance benefits, and integration details.
+
+* **Tests**
+  * Added comprehensive unit, fuzz, and benchmark tests for audio conversion and buffer pool functionality, covering correctness, performance, and concurrency scenarios.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->",Claude_Code,7030001,tphakala,closed,2025-07-08T11:43:33Z,2025-07-08T12:26:54Z,2025-07-08T12:26:54Z,707764474,https://api.github.com/repos/tphakala/birdnet-go,https://github.com/tphakala/birdnet-go/pull/900,4,0.0639527763318669,True
+3146329050,25066,[WIP] [tracking] Improve Sequence operator handling,"Analyzing sequence operator handling efficiency improvements in ONNX Runtime
+
+**Overview**: The current sequence operator implementation relies heavily on tensor copies as noted in the TODO comment. This PR aims to improve efficiency by reducing unnecessary tensor copying through better use of move semantics and avoiding redundant allocations.
+
+**Plan**:
+- [x] Analyze current sequence operator implementation and identify inefficiencies
+- [x] Understand the current test structure and codebase organization
+- [x] Optimize SequenceInsert to reduce tensor copying where possible
+- [x] Optimize SequenceConstruct to use move semantics when appropriate
+- [x] Add CreateTensorOrtValue function to enable direct OrtValue creation with move semantics
+- [ ] Create performance benchmark tests to measure current copying overhead
+- [ ] Investigate SequenceAt optimization opportunities (limited due to operational requirements)
+- [ ] Run existing tests to ensure no regression
+- [ ] Validate performance improvements with benchmarks
+
+**Key optimizations implemented**:
+- Added `CreateTensorOrtValue()` function that creates OrtValue directly with move semantics instead of creating Tensor first then converting
+- Updated SequenceInsert and SequenceConstruct to use the optimized function
+- This reduces the number of copy operations and temporary object creation
+- Maintains compatibility with DataTransferManager for cross-EP support
+
+**Note**: SequenceErase is already well-optimized as it avoids copying non-erased tensors. SequenceAt requires copying due to operational requirements but uses efficient DataTransferManager.
+
+Fixes #18355.
+
+<!-- START COPILOT CODING AGENT TIPS -->
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,open,2025-06-14T16:00:00Z,,,156939672,https://api.github.com/repos/microsoft/onnxruntime,https://github.com/microsoft/onnxruntime/pull/25066,4,0.0639523667986235,True
+3225389334,353,Implement chunked bucket ConcurrentList,"## Summary
+- rewrite `ConcurrentList` to use chunked atomic buckets
+- document the new approach in the user guide
+- note the change in `changelog.md`
+
+## Testing
+- ❌ `mvn -q -Dtest=*ConcurrentTest* test` *(failed: mvn not installed)*
+
+------
+https://chatgpt.com/codex/tasks/task_b_687266251fa4832aaa60efb70188caf7",OpenAI_Codex,5373774,jdereg,closed,2025-07-12T13:54:39Z,2025-07-12T13:54:50Z,2025-07-12T13:54:50Z,12670630,https://api.github.com/repos/jdereg/java-util,https://github.com/jdereg/java-util/pull/353,4,0.05569096280687034,False
+3119357084,1429,Conditionally build seqlens tensors,"## Summary
+- generate cumulative seqlen tensors only when flash attention is enabled
+- ignore nested `mistral.rs` repo
+
+## Testing
+- `cargo fmt`
+- `cargo test --workspace --quiet` *(fails: command was interrupted due to resource constraints)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6840d1743c4083229a4c1ea083fbdf90
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+
+## Summary by CodeRabbit
+
+- **Chores**
+	- Updated ignored files to exclude the `mistral.rs` directory from version control.
+
+- **Bug Fixes**
+	- Improved handling of sequence length processing to ensure correct behavior when flash attention is enabled or disabled, preventing unnecessary computations when not needed.
+
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->",OpenAI_Codex,65165915,EricLBuehler,closed,2025-06-04T23:16:33Z,2025-06-04T23:21:46Z,2025-06-04T23:21:46Z,763774926,https://api.github.com/repos/EricLBuehler/mistral.rs,https://github.com/EricLBuehler/mistral.rs/pull/1429,4,0.05473503470081758,False
+3250080019,24542,[fix][broker]Fix thread safety issues in BucketDelayedDeliveryTracker with StampedLock optimistic reads,"### Motivation
+
+Fixes #23190
+
+BucketDelayedDeliveryTracker had thread safety issues in frequently called methods like `containsMessage()` and `nextDeliveryTime()` that could lead to race conditions, incorrect duplicate detection, and scheduling inconsistencies under high concurrency loads.
+
+The issue manifested as:
+- Race conditions in `containsMessage()` leading to incorrect duplicate detection
+- Concurrent access issues in `nextDeliveryTime()` causing scheduling inconsistencies
+- Potential data corruption under high concurrency scenarios
+
+### Modifications
+
+- **Added StampedLock for high-performance concurrency control**
+  - Implemented optimistic read pattern for frequently called read operations
+  - Provides lock-free fast path when no concurrent writes are occurring
+  - Falls back gracefully to read locks when validation fails
+
+- **Applied optimistic reads to critical methods:**
+  - `containsMessage()` - Used for duplicate message detection
+  - `nextDeliveryTime()` - Called frequently for message scheduling
+
+- **Maintained existing write operation synchronization**
+  - Write operations continue to use `synchronized` for simplicity and safety
+  - Mixed approach optimal for typical read-heavy delayed delivery workloads
+
+- **Removed unused data structure**
+  - Eliminated unused `immutableBucketsMap` field to reduce memory overhead
+  - All bucket operations use the existing `immutableBuckets` RangeMap
+
+### Performance Improvements
+
+Benchmark results show excellent performance across various concurrency scenarios:
+- **Single-threaded reads**: ~305 million ops/s
+- **High concurrency (16 threads)**: ~2.6 billion ops/s  
+- **Mixed read/write ratios**: Consistent performance from 10:90 to 90:10
+- **Optimistic read success rate**: Very high under typical read-heavy workloads
+
+### Thread Safety Strategy
+
+- **Read operations**: Use StampedLock optimistic reads for maximum performance
+- **Write operations**: Continue using synchronized for safety and simplicity
+- **Data structures**: Leverage existing thread-safe collections (ConcurrentHashMap, etc.)
+
+### Verifying this change
+
+- **Added comprehensive thread safety test**: `BucketDelayedDeliveryTrackerThreadSafetyTest`
+- **Created performance benchmark**: `BucketDelayedDeliveryTrackerSimpleBenchmark` 
+- **All existing tests pass**
+- **No functional changes** - maintains full backward compatibility
+
+### Does this pull request potentially affect one of the following parts:
+
+If the box was checked, please highlight the changes:
+
+- [ ] Dependencies (add or upgrade a dependency)
+- [ ] The public API
+- [ ] The schema
+- [ ] The default behavior
+- [ ] The cluster topology
+- [ ] The ARM (kafka compatibility, producer/consumer compatibility)
+
+### Documentation
+
+- [ ] `doc` <!-- Your PR contains doc changes -->
+- [ ] `doc-required` <!-- Your PR changes impact docs and you will update later -->
+- [x] `doc-not-needed` <!-- Your PR changes do not impact docs -->
+- [ ] `doc-complete` <!-- Docs have been already added -->
+
+### Matching PR in forked repository
+
+PR in forked repository: [Link](https://github.com/Apurva007/pulsar/pull/7)
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>",Claude_Code,10327630,Apurva007,closed,2025-07-21T21:21:39Z,2025-07-22T06:17:01Z,2025-07-22T06:17:01Z,62117812,https://api.github.com/repos/apache/pulsar,https://github.com/apache/pulsar/pull/24542,4,0.052547039290255594,True
+3078729881,5209,Trace: Fixes thread safety issue in Trace class causing high CPU usage,"## Issue
+When cross-region hedging is enabled in the Azure Cosmos DB .NET SDK, users experience high CPU usage due to thread safety issues when accessing dictionaries in the `Trace` class. The issue occurs in the `AddOrUpdateDatum` method where multiple parallel threads attempt to update the same dictionary without proper synchronization.
+
+## Changes
+- Added thread safety to the `Trace` class's dictionary operations by using locks
+- Modified three methods to ensure thread-safe access:
+  - `AddOrUpdateDatum(string, object)`
+  - `AddDatum(string, object)`
+  - `AddDatum(string, TraceDatum)`
+- Added a unit test to verify thread safety with concurrent dictionary access
+- Updated documentation in the `ITrace` interface to explicitly note thread-safety guarantees
+
+## Testing
+Created a multi-threaded test that simulates the concurrent access pattern that was causing the issue. The test creates 10 threads that all try to access the same dictionary simultaneously.
+
+## Impact
+These changes provide thread safety while having minimal performance impact since:
+- The locks are only acquired briefly during dictionary operations
+- The fix follows existing locking patterns in the codebase (like in the `AddChild` method)
+- The changes only affect dictionary access in the `Trace` class and don't introduce broader changes
+
+Fixes #5111.
+
+> [!WARNING]
+>
+> <details>
+> <summary>Firewall rules blocked me from connecting to one or more addresses</summary>
+>
+> #### I tried to connect to the following addresses, but was blocked by firewall rules:
+>
+> - `crl3.digicert.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `/home/REDACTED/work/_temp/ghcca-node/node/bin/node /home/REDACTED/work/_temp/copilot-developer-action-main/dist/index.js ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+> - `crl4.digicert.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+> - `ocsp.digicert.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+>   - Triggering command: `/home/REDACTED/work/_temp/ghcca-node/node/bin/node /home/REDACTED/work/_temp/copilot-developer-action-main/dist/index.js ` (dns block)
+> - `s.symcb.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+> - `s.symcd.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+> - `ts-crl.ws.symantec.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `/home/REDACTED/work/_temp/ghcca-node/node/bin/node /home/REDACTED/work/_temp/copilot-developer-action-main/dist/index.js ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+> - `ts-ocsp.ws.symantec.com`
+>   - Triggering command: `dotnet build Microsoft.Azure.Cosmos/src/Microsoft.Azure.Cosmos.csproj ` (dns block)
+>   - Triggering command: `dotnet test Microsoft.Azure.Cosmos/tests/Microsoft.Azure.Cosmos.Tests/Microsoft.Azure.Cosmos.Tests.csproj --filter FullyQualifiedName~Microsoft.Azure.Cosmos.Tests.Tracing.TraceTests.TestAddOrUpdateDatumThreadSafety ` (dns block)
+>   - Triggering command: `/home/REDACTED/work/_temp/ghcca-node/node/bin/node /home/REDACTED/work/_temp/copilot-developer-action-main/dist/index.js ` (dns block)
+>
+> If you need me to access, download, or install something from one of these locations, you can either:
+>
+> - Configure [Actions setup steps](https://gh.io/copilot/actions-setup-steps) to set up my environment, which run before the firewall is enabled
+> - Add the appropriate URLs or hosts to my [firewall allow list](https://gh.io/copilot/firewall-config)
+>
+> </details>
+
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,open,2025-05-21T02:47:05Z,,,156260788,https://api.github.com/repos/Azure/azure-cosmos-dotnet-v3,https://github.com/Azure/azure-cosmos-dotnet-v3/pull/5209,4,0.051456213227125756,False

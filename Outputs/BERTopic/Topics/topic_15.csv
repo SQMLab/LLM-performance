@@ -1,0 +1,215 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3188925003,4261,Update lower builtin folding and TPC-DS IR outputs,"## Summary
+- support constant folding for `lower` builtin in the VM compiler
+- regenerate IR output for TPC‑DS queries q50–q59 to reflect the updated compiler behavior
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862aa0298588320bdee85ae21c4f291",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T15:29:04Z,2025-06-30T15:29:47Z,2025-06-30T15:29:47Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4261,15,1.0,False
+3189026488,4268,Update vm reverse folding,"## Summary
+- fold constant `reverse` calls at compile time
+- refresh IR golden for tpc-ds q8
+
+## Testing
+- `go test -tags slow ./tests/vm -run ""TPCDS/q[1-9]\.mochi$"" -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862aeaf410c8320af622849dc372d40",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T15:56:37Z,2025-06-30T15:57:03Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4268,15,1.0,False
+3189032906,4282,Update vm substring folding and tpch q8,"## Summary
+- enhance VM substring constant folding using `clampSlice`
+- refresh tpch `q8` IR output to match current compiler
+
+## Testing
+- `go test ./tests/vm -tags=slow -run ""TestVM_TPCH/q8.mochi"" -v`
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862af20813c832093714f858eacfd84",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T15:59:02Z,2025-06-30T16:01:56Z,2025-06-30T16:01:56Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4282,15,1.0,False
+3188803096,4233,Update VM const reuse and refresh TPC‑DS IR,"## Summary
+- reuse constant registers when building grouped records in the VM compiler
+- refresh TPC-DS IR disassembly for queries q60–q69
+
+## Testing
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q60 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q61 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q62 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q63 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q64 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q65 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q66 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q67 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q68 -update -count=1`
+- `go test -tags slow ./tests/vm -run TestVM_TPCDS/q69 -update -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862a22aa7a88320b9f259582d22d4a4",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:56:07Z,2025-06-30T15:03:12Z,2025-06-30T15:03:11Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4233,15,1.0,False
+3188632066,4199,Update vm constant reuse and IR,"## Summary
+- reuse constant registers when building grouped records in the VM
+- update TPCH q13 IR output
+
+## Testing
+- `go test ./...`
+- `go test -tags slow -run TestVM_TPCH/q13.mochi -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686283dcce4483208629d98d625f7888",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:07:07Z,2025-06-30T14:07:31Z,2025-06-30T14:07:31Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4199,15,1.0,True
+3188714494,4202,Update tpch q1 VM disassembly,"## Summary
+- update the disassembled IR for TPCH query q1 after VM constant reuse improvements
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68629c344d648320aa424cc01b47b1a8",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:30:45Z,2025-06-30T14:34:51Z,2025-06-30T14:34:51Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4202,15,1.0,False
+3188066607,4165,Enable constant register reuse in VM,"## Summary
+- reuse constant registers in the VM compiler so repeated constants are not re-emitted
+- update IR output for TPC‑H q22 after compilation change
+
+## Testing
+- `go test ./tests/vm -tags slow -run TestVM_TPCH/q22.mochi -update -count=1`
+- `go test ./tests/vm -tags slow -run TestVM_TPCH/q22.mochi -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68626c19d0d0832093c801b4bd5bf1c7",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T11:04:06Z,2025-06-30T11:04:25Z,2025-06-30T11:04:25Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4165,15,1.0,False
+3186031697,3946,Reduce map constant instructions,"## Summary
+- remove `freshConst` and reuse constant registers for map and struct literals
+- refresh VM IR golden files with optimized instructions
+- optimize hash join register increments to reduce instruction count
+
+## Testing
+- `go test -tags slow ./tests/vm -run TestVM_IR`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68610771c4cc8320b81dea13cf8d45f9",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T10:32:04Z,2025-07-01T03:06:06Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3946,15,1.0,True
+3188736652,4220,Update q7 IR,"## Summary
+- update q7.ir.out after improving the VM's handling of TPC-H queries
+
+## Testing
+- `go test ./tests/vm -tags slow -run TestVM_TPCH/q7.mochi -count=1` *(fails: signal interrupt)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68629c3e679883208422e5eab4c62db9",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:37:33Z,2025-06-30T14:38:19Z,2025-06-30T14:38:19Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4220,15,1.0,False
+3188169860,4172,Update VM for TPCH,"## Summary
+- reuse null constants in the VM
+- update tpc-h IR outputs for new constant register reuse
+
+## Testing
+- `go test ./tests/vm -run TestVM_TPCH/q22 -tags=slow -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68626f44059483209176665e25b81a1d",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T11:40:40Z,2025-06-30T11:41:13Z,2025-06-30T11:41:13Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4172,15,1.0,False
+3188718282,4206,Improve const folding and update tpch q6 IR,"## Summary
+- canonicalize float constants in `constKey`
+- update TPCH q6 IR to reflect new compilation output
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68629c3c2b488320a548e63de0e4ff12",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:31:45Z,2025-06-30T14:34:23Z,2025-06-30T14:34:23Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4206,15,0.37837087340568715,False
+3188608115,4181,Update VM constant folding for cast,"## Summary
+- enhance compile-time constant folding to handle `as` cast expressions
+- regenerate tpch q9 IR after optimization changes
+
+## Testing
+- `go test -tags slow ./tests/vm -run TestVM_TPCH/q9 -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862916300c08320a800fe129dbf5964",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T13:59:56Z,2025-06-30T14:02:28Z,2025-06-30T14:02:28Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4181,15,0.3743547870687395,False
+3223857318,3641,Refactor QZydis instance in Bridge class,Make `QZydis` a member of the `Bridge` class to optimize `GuiGetDisassembly` performance and ensure configuration synchronization.,Cursor,2458265,mrexodia,closed,2025-07-11T18:38:12Z,2025-07-21T11:24:09Z,2025-07-21T11:24:09Z,33791743,https://api.github.com/repos/x64dbg/x64dbg,https://github.com/x64dbg/x64dbg/pull/3641,15,0.3531002611258818,False
+2905716327,9027,refactor(twap): implement strategy pattern for accumulator updates,"This commit refactors the TWAP module to use the strategy pattern more thoroughly for its accumulator updates. Previously, the strategy pattern was only used for TWAP computation but not for the accumulator updates.
+
+Key changes:
+- Add `updateAccumulators` method to the twapStrategy interface
+- Implement strategy-specific accumulator update logic for both arithmetic and geometric strategies
+- Modify `getInterpolatedRecord` to use the provided strategy's accumulator update method
+- Update remaining code to use the appropriate strategy for accumulator updates
+- Maintain backward compatibility in exported functions and existing code paths
+
+With this change, geometric accumulator calculations are now only performed when using the geometric strategy, making the system more efficient by avoiding unnecessary calculations for the arithmetic strategy.
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+Co-Authored-By: Claude <noreply@anthropic.com>
+
+Closes: #7113 ",Claude_Code,6440154,ValarDragon,closed,2025-03-09T22:29:23Z,2025-03-21T00:03:05Z,,304841810,https://api.github.com/repos/osmosis-labs/osmosis,https://github.com/osmosis-labs/osmosis/pull/9027,15,0.2686417806935164,True
+3186091790,3953,Disable vm optimizations,"## Summary
+- add EnableOptimizations flag to runtime/vm
+- avoid running Optimize unless flag enabled
+- regenerate IR for a subset of TPC-H queries with optimizations off
+
+## Testing
+- `go run ./tools/update_tpch >/tmp/update.log`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861205dbb388320a3014c08596ea849",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T11:44:33Z,2025-07-01T12:02:23Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3953,15,0.2634856585958248,False
+3188613010,4191,Update VM constant reuse,"## Summary
+- support reusing empty list constants in the VM
+- regenerate IR for TPCH q14
+
+## Testing
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862916f111c83209ade486c0581ee66",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:01:21Z,2025-06-30T14:04:13Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4191,15,0.247556577003535,False
+3188613267,4193,Improve VM constant reuse,"## Summary
+- improve constant reuse by deduplicating list and map values
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862917832608320a45c035333107f8d",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:01:24Z,2025-06-30T14:04:33Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4193,15,0.21413471885202123,False
+3188613776,4195,Update VM constant reuse,"## Summary
+- enable reuse of empty list and map constants in the VM
+- no changes to golden output needed for TPCH q20 but confirmed compilation
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862917b798c832093dcbbe9c463e6ea",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:01:32Z,2025-06-30T14:04:43Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4195,15,0.20573083912805298,False
+3188614083,4196,Improve constant reuse in VM,"## Summary
+- reuse empty list and map constants in the VM
+- regenerate IR output for TPC‑H query 21
+
+## Testing
+- `go test ./...`
+- `go test -tags slow ./tests/vm -run TestVM_TPCH/q21\.mochi -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862917cb7fc83209fe36289b2524e07",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:01:38Z,2025-06-30T14:04:55Z,2025-06-30T14:04:55Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4196,15,0.20229297293292126,False
+3186329921,3992,Optimize runtime/vm,"## Summary
+- const fold more list operations
+- regenerate tpch IRs
+
+## Testing
+- `make test STAGE=runtime/vm`
+- `go test ./runtime/vm -c`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686167a4ad548320b2c992000bfd6d76",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:33:40Z,2025-06-29T16:34:06Z,2025-06-29T16:34:06Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3992,15,0.20143287659554152,False
+3188614216,4197,Add constant reuse for empty collections,"## Summary
+- enhance VM constant intern table so empty lists/maps reuse registers
+
+## Testing
+- `make test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862917f178c83209c27b504ac211536",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:01:40Z,2025-06-30T14:07:42Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4197,15,0.16430729715682957,False
+3188612213,4190,Support constant reuse for empty lists in VM,"## Summary
+- improve VM constant register reuse by caching empty lists
+
+## Testing
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6862916c405483209ec316ae13db839d",OpenAI_Codex,1218621,tamnd,closed,2025-06-30T14:01:07Z,2025-06-30T14:03:59Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4190,15,0.1629787521708373,False

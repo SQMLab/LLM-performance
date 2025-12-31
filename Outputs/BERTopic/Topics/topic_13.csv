@@ -1,0 +1,256 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3254472084,3678,fix duplicate d3 in Insight PWA,"## Summary
+- avoid bundling d3 in insight.bundle.js
+- keep d3 script tag in generated Insight docs
+
+## Testing
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/build.js docs/alpha_agi_insight_v1/index.html`
+- `python check_env.py --auto-install`
+- `python scripts/verify_insight_offline.py` *(fails: integrity check for insight.bundle.js)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68802ac9e95083339f0f080d4f47f106",OpenAI_Codex,24208299,MontrealAI,closed,2025-07-23T00:55:49Z,2025-07-23T00:56:22Z,2025-07-23T00:56:22Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/3678,13,1.0,False
+3169784411,2532,[alpha_factory] document placeholder and add cycle heuristic,"## Summary
+- mark evaluate_agent placeholder in docs
+- mention placeholder behaviour in changelog
+- tweak MetaRefinementAgent to detect slow cycles
+- test cycle adjustment heuristic
+
+## Testing
+- `pre-commit run --files alpha_factory_v1/core/agents/meta_refinement_agent.py docs/ARCHITECTURE.md docs/CHANGELOG.md tests/test_meta_refinement_agent.py` *(fails: proto-verify; verify-requirements-lock)*
+- `python scripts/check_python_deps.py` *(fails: Missing packages numpy, yaml, pandas)*
+- `python check_env.py --auto-install` *(fails: Operation cancelled)*
+- `pytest -q` *(fails: KeyboardInterrupt during environment setup)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6859e5ed11b08333b5b8bfaedf01487d",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-24T00:01:56Z,2025-06-24T00:02:06Z,2025-06-24T00:02:06Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2532,13,1.0,True
+3073998720,367,Improve offline demo resilience,"## Summary
+- support running alpha detection without pandas
+- make demo agent import optional deps lazily
+- include noop Tool decorator when openai_agents is missing
+- skip demo launch if gradio not installed
+- fix run_experience_demo.sh executable bit
+
+## Testing
+- `python check_env.py`
+- `python -m unittest tests.test_era_experience`
+- `python -m unittest tests.test_alpha_detection`
+- `python -m unittest discover tests` *(fails: missing deps & non executable scripts)*",OpenAI_Codex,24208299,MontrealAI,closed,2025-05-19T14:13:26Z,2025-05-19T14:22:08Z,2025-05-19T14:22:08Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/367,13,1.0,True
+3111305843,1453,[alpha_factory] add gzip size test,"## Summary
+- check gzip size of `dist/app.js` in the Insight browser demo
+
+## Testing
+- `pytest -q alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/test_bundle_size.py`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in CollectorRegistry)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683df5435f008333932fe0ecb6f1d9f8",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-02T19:07:10Z,2025-06-02T19:07:18Z,2025-06-02T19:07:18Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1453,13,1.0,False
+3070310257,29,Improve preflight checks,"## Summary
+- add module presence checks for `openai` and `openai_agents`
+- show status of these modules in the preflight banner
+
+## Testing
+- `python alpha_factory_v1/scripts/preflight.py`",OpenAI_Codex,24208299,MontrealAI,closed,2025-05-17T04:17:37Z,2025-05-17T04:17:50Z,2025-05-17T04:17:50Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/29,13,1.0,False
+3112047147,1470,[alpha_factory] tighten insight bundle size checks,"## Summary
+- enable explicit treeShaking in `build.js`
+- shrink gzip max size to 2 MiB in `build.js`
+- enforce 2 MiB limit in `test_bundle_size.py`
+- apply same 2 MiB gzip check in `manual_build.py`
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in CollectorRegistry)*
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/build.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/manual_build.py alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/test_bundle_size.py` *(fails to fetch hooks due to no network)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683e492a82a88333ac63e88d9db12e8b",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-03T01:05:43Z,2025-06-03T01:05:54Z,2025-06-03T01:05:54Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1470,13,1.0,False
+3123330256,1651,[alpha_factory] disable grad in MiniMu,"## Summary
+- disable gradient tracking during inference in minimuzero
+- type hints for `MiniMu.policy` and `MiniMu.reset`
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: 69 failed, 188 passed, 28 skipped)*
+- `pre-commit run --files alpha_factory_v1/demos/muzero_planning/minimuzero.py` *(fails: proto-verify)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_684242c095188333b3d6a4b68bf227ad",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-06T01:37:24Z,2025-06-06T01:37:33Z,2025-06-06T01:37:33Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1651,13,1.0,False
+3185047320,2708,[alpha_factory] open gallery links in new tab,"## Summary
+- open demo links in new tab
+- load preview images lazily for faster gallery rendering
+
+## Testing
+- `python scripts/check_python_deps.py` *(fails: Missing packages: numpy, yaml, pandas)*
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: 44 errors during collection)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685ffc463f408333a5dae308b8441862",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-28T14:48:13Z,2025-06-28T14:48:22Z,2025-06-28T14:48:22Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2708,13,1.0,False
+3081857693,512,Add Codex setup script and update contributor guidelines,"## Summary
+- refine `.codex/setup.sh` for a fast Codex environment
+- simplify repository guidelines in `AGENTS.md`
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ImportError from pydantic)*",OpenAI_Codex,24208299,MontrealAI,closed,2025-05-22T02:34:00Z,2025-05-22T02:34:22Z,2025-05-22T02:34:22Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/512,13,1.0,False
+3115244905,1510,[alpha_factory] embed libs in bundle,"## Summary
+- embed library code and remove legacy script tags
+- test that the built demo only makes one JS request
+
+## Testing
+- `python check_env.py --auto-install`
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/build.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/manual_build.py alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/test_single_network_request.py` *(fails: unable to access 'https://github.com/psf/black/' due to network)*
+- `pytest -q alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/test_single_network_request.py` *(fails: BrowserType.launch executable doesn't exist)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683f4fe33fbc833393ab683467939387",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-03T19:49:05Z,2025-06-03T19:49:12Z,2025-06-03T19:49:12Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1510,13,1.0,False
+3107327866,1342,[alpha_factory] Enforce Insight bundle size,"## Summary
+- fail the Insight Browser build if bundle exceeds 180000 bytes
+- remind contributors about the 180 KB limit in the PR template
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in CollectorRegistry)*
+- `pre-commit run --files .github/pull_request_template.md alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/.github/workflows/demo.yml` *(fails to fetch hooks)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683c607a6db083338e1992b8f000e0c0",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-01T14:19:27Z,2025-06-01T14:19:42Z,2025-06-01T14:19:42Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1342,13,1.0,False
+3169508590,2526,[alpha_factory] enhance meta refinement,"## Summary
+- parse orchestrator logs for latency/error metrics and target slow modules
+- verify decreased metric before merging
+- adapt tests for new metric rules
+
+## Testing
+- `pre-commit run --files alpha_factory_v1/core/agents/meta_refinement_agent.py alpha_factory_v1/core/self_evolution/harness.py tests/test_self_evolution.py tests/test_meta_refinement_agent.py` *(failed: environment setup interrupted)*
+- `python scripts/check_python_deps.py`
+- `python check_env.py --auto-install`
+- `pytest -q` *(failed: 50 failed, 76 passed, 30 skipped, 5 errors)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6859c22dfb408333a87ac97cf278a7cc",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-23T21:27:35Z,2025-06-23T21:27:42Z,2025-06-23T21:27:42Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2526,13,0.2756692383861236,False
+3206837211,113,Implement pass@k evaluation,"## Summary
+- add pass@k metric in `EnvStateManager.get_rollout_states`
+
+## Testing
+- `pytest -q` *(fails: ModuleNotFoundError: No module named 'omegaconf')*
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ab45f4fd88321a60eaa4db56120d5",OpenAI_Codex,112086423,ZihanWang314,closed,2025-07-06T17:52:29Z,2025-07-06T18:05:19Z,2025-07-06T18:05:19Z,922278962,https://api.github.com/repos/RAGEN-AI/RAGEN,https://github.com/RAGEN-AI/RAGEN/pull/113,13,0.23592781699754825,False
+3104768514,1251,[alpha_factory] add multi-objective metrics and pareto filter,"## Summary
+- add evaluate_agent to compute accuracy, novelty_simhash and latency
+- implement fast Pareto front selection in MATS
+- test NSGA-II Pareto frontier under 50 ms
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q tests/test_multi_objective.py`
+- `pre-commit run --files src/eval/fitness.py alpha_factory_v1/demos/alpha_agi_insight_v1/src/simulation/mats.py tests/test_multi_objective.py` *(fails: Failed to connect to proxy port 8080)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683a74de58348333a7cdeda58fba2c03",OpenAI_Codex,24208299,MontrealAI,closed,2025-05-31T03:26:34Z,2025-05-31T03:26:42Z,2025-05-31T03:26:42Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1251,13,0.18446752288981424,False
+3107735616,1377,[alpha_factory] Speed up Pareto front,"## Summary
+- speed up Pareto front computation with a single scan
+- increase performance test population size
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: `tests/test_llm_cache.py` ValueError: Duplicated timeseries in CollectorRegistry)*
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/src/utils/pareto.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/test_plot_perf.py` *(failed to fetch hooks due to no network)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683caafc60688333b384bf4cebb229ef",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-01T19:38:02Z,2025-06-01T19:38:09Z,2025-06-01T19:38:09Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1377,13,0.15351999817437523,False
+3117019425,7,Enhance tracker efficiency and add tests,"## Summary
+- improve LK tracker efficiency and move timing logic
+- ensure docstrings and comments use English only
+- add simple unit tests for helper functions
+- document how to run the tests
+
+## Testing
+- `python -m py_compile main.py common.py video.py tst_scene_render.py tests/test_common.py`
+- `python -m unittest discover -s tests`
+
+------
+https://chatgpt.com/codex/tasks/task_e_684006eeb38c832dba4be4830d551514",OpenAI_Codex,46466469,swhan0329,closed,2025-06-04T08:47:45Z,2025-06-04T08:48:38Z,2025-06-04T08:48:38Z,307616074,https://api.github.com/repos/swhan0329/vehicle_speed_estimation,https://github.com/swhan0329/vehicle_speed_estimation/pull/7,13,0.15052541700572758,False
+3253657829,3666,[alpha_factory] improve metrics server polling,"## Summary
+- add restart logic for metrics test server
+- show subprocess output when the server fails to start
+- poll server readiness every 50ms for faster startup
+
+## Testing
+- `python scripts/check_python_deps.py`
+- `python check_env.py --auto-install` *(failed: openai_agents missing __version__)*
+- `pre-commit run --files tests/test_metrics.py` *(failed to initialize environment)*
+- `pytest -k test_metrics -q` *(failed: Environment check failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_687fd345af4c83338719b90b78f13115",OpenAI_Codex,24208299,MontrealAI,closed,2025-07-22T18:21:24Z,2025-07-22T18:21:34Z,2025-07-22T18:21:34Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/3666,13,0.10198949288068052,False
+3172149812,2554,[alpha_factory] drain in-memory event queues,"## Summary
+- start an in-memory consumer loop when AgentManager starts
+- stop the consumer loop on shutdown
+- add a regression test for EventBus consumer management
+
+## Testing
+- `python scripts/check_python_deps.py` *(fails: Missing packages: yaml)*
+- `python check_env.py --auto-install`
+- `pytest -q tests/test_agent_manager_consumer.py tests/test_eventbus.py tests/test_kafka_service.py`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685aadc47f888333ad63e795105739ab",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-24T14:04:55Z,2025-06-24T14:06:15Z,2025-06-24T14:06:15Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2554,13,0.0989620849180282,False
+3154327250,2307,[alpha_factory] add memory limit to MemoryAgent,"## Summary
+- limit stored records using `AGI_INSIGHT_MEMORY_LIMIT`
+- trim history when the cap is reached and save the truncated list
+- test cap behaviour and env var handling
+
+## Testing
+- `python scripts/check_python_deps.py` *(fails: Missing packages)*
+- `python check_env.py --auto-install` *(fails: No network connectivity)*
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/src/agents/memory_agent.py tests/test_memory_agent_file_persistence.py` *(fails: proto-verify, verify requirements)*
+- `PYTHONPATH=$(pwd) pytest -q tests/test_memory_agent_file_persistence.py` *(fails: Environment check failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6851aaf597448333bb0d8d720c021c70",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-17T18:01:39Z,2025-06-17T18:01:59Z,2025-06-17T18:01:59Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2307,13,0.0986726604235858,False
+3087062778,615,[alpha_factory] improve metrics setup and memory defaults,"## Summary
+- avoid duplicate prometheus metrics when multiple PingAgent instances run in the same process
+- default MemoryFabric vector store to RAM unless VECTOR_STORE_USE_SQLITE=true
+
+## Testing
+- `pytest alpha_factory_v1/tests/test_memory_provider.py::MemoryFabricFallbackTest::test_vector_ram_mode tests/test_ping_agent.py::TestPingAgent::test_run_cycle_publishes -q`
+- `pytest -q` *(fails: 32 failed, 190 passed, 7 skipped)*",OpenAI_Codex,24208299,MontrealAI,open,2025-05-23T17:33:40Z,,,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/615,13,0.08211972978846478,False
+3115315767,152,Fix busy wait in vllm test client,"## Summary
+- avoid high CPU usage in `test_client` by sleeping when server is unreachable
+
+## Testing
+- `pytest -q`
+
+------
+https://chatgpt.com/codex/tasks/task_e_683f56c119f4832b8731c6db6fa962eb",OpenAI_Codex,4875137,bradhilton,closed,2025-06-03T20:14:06Z,2025-06-03T20:14:38Z,2025-06-03T20:14:38Z,946178371,https://api.github.com/repos/OpenPipe/ART,https://github.com/OpenPipe/ART/pull/152,13,0.07545003365048436,False
+3175920300,16571,wip: memory metrics,"<!--
+Contributions welcome! See https://github.com/ethereum-optimism/.github/blob/master/CONTRIBUTING.md
+-->
+
+**Description**
+
+Implement a simple way to measure memory exposed as a metric that can be used by any service",OpenAI_Codex,6626818,tynes,closed,2025-06-25T14:39:12Z,2025-07-28T09:24:47Z,,238797860,https://api.github.com/repos/ethereum-optimism/optimism,https://github.com/ethereum-optimism/optimism/pull/16571,13,0.05956431911569327,False
+3023248867,246,feat: allow configuring metrics to reduce cardinality,"# Refactor metrics to reduce cardinality
+
+This PR reduces the cardinality of metrics by:
+
+1. Adding a configurable error label mode (""compact"" or ""verbose"") 
+   - In ""compact"" mode, only the error type is used as a label
+   - In ""verbose"" mode (default for backward compatibility), the full error message is used
+
+2. Adding configurable histogram buckets for all duration metrics
+   - Users can specify their own buckets to reduce the number of time series
+
+## Changes
+
+- Added `errorLabelMode` and `histogramBuckets` fields to `MetricsConfig`
+- Modified `ErrorSummary` to support compact mode
+- Added a `SetHistogramBuckets` function to replace metrics with custom buckets
+- Added initialization in the `Init` function
+- Updated documentation
+
+Requested by: Aram Alipoor (aram@erpc.cloud)
+
+Link to Devin run: https://app.devin.ai/sessions/11e4da16560e4af5b51861e97be3fe93
+",Devin,158243242,devin-ai-integration[bot],closed,2025-04-27T18:31:13Z,2025-04-28T13:44:36Z,2025-04-28T13:44:36Z,796633002,https://api.github.com/repos/erpc/erpc,https://github.com/erpc/erpc/pull/246,13,0.05212991833858622,True

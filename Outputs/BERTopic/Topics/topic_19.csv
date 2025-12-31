@@ -1,0 +1,513 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3122455352,1179,Cache hub_client.beta.threads.messages.list in environment.py,"The `hub_client.beta.threads.messages.list` API call was taking a long time to run and being called repeatedly during agent execution, causing performance issues.
+
+This PR implements a message cache in the `Environment` class that:
+
+- **Caches messages on first call**: The first `_list_messages()` call fetches from the API and populates the cache
+- **Serves subsequent calls from cache**: Following calls return cached data instantly without API requests
+- **Updates cache on new messages**: `add_reply()` and `_add_message()` automatically append new messages to the cache
+- **Invalidates cache at run end**: Cache is cleared when agent runs complete to ensure fresh data for next execution
+
+## Implementation Details
+
+```python
+# Cache structure added to Environment.__init__()
+self._messages_cache: Optional[List[Message]] = None
+self._messages_cache_initialized = False
+
+# Cache-aware message listing
+def _list_messages(limit, order, thread_id):
+    if cache_available_for_thread:
+        return cached_messages  # Instant return
+    
+    # Fetch from API and populate cache
+    messages = hub_client.beta.threads.messages.list(...)
+    self._messages_cache = messages.data
+    return messages.data
+
+# Cache updates on new messages  
+def add_reply(message):
+    new_message = hub_client.beta.threads.messages.create(...)
+    if cache_initialized:
+        self._messages_cache.append(new_message)  # Keep cache in sync
+    return new_message
+```
+
+## Performance Impact
+
+- **First API call per run**: Normal performance (cache miss)
+- **Subsequent calls in same run**: Instant response (cache hit)
+- **Memory usage**: Minimal - only stores messages for current thread
+- **Thread safety**: Cache only applies to main thread, other threads bypass cache
+
+## Cache Lifecycle
+
+1. **Initialization**: Cache starts empty and uninitialized
+2. **Population**: First `_list_messages()` call loads cache from API
+3. **Updates**: New messages automatically added to cache via `add_reply()`
+4. **Invalidation**: Cache cleared in `run()` method's finally block
+
+The implementation respects thread boundaries and maintains data consistency while providing significant performance improvements for repeated message list operations during agent execution.
+
+Fixes #1178.
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,closed,2025-06-05T19:50:24Z,2025-06-06T14:55:39Z,2025-06-06T14:55:39Z,797493401,https://api.github.com/repos/nearai/nearai,https://github.com/nearai/nearai/pull/1179,19,1.0,False
+3104322035,64,[WIP] CachedVariable for ChildSelectors,"Thanks for assigning this issue to me. I'm starting to work on it and will keep this PR's description up to date as I form a plan and make progress.
+
+Original issue description:
+
+> 	• Add CachedVariable (name pending) property that caches the result of an expression for use in the ChildSelectors.
+> 		○ A common pattern in ChildSelectors is a switch statement, where you calculate some value and visit different children depending on the result. The issue today is this calculation must be done for each child selector. This feature would allow you to calculate the result once and use it directly multiple times. 
+> 		○ Allows you to evaluate an expression and save the result (non-persisted?).
+> 		○ ChildSelectors then have access to that variable to simplify their ShouldSelect statements.
+> 		○ Consider allowing the variable to be a dynamic object. So could be bool, string, object, etc.. This allows users to set as many properties as they wish.
+> 		○ Consider what using a dynamic object would look like. If we have to wrap it every time with (Session.CachedVariable as string), then the usability goes down. In this case, it may be better to just set it as a string. Users could still use it as a bool or object by converting the string if they desire.
+> 		○ Consider if this should be localized to just the current TreeNode's ChildSelector, or if you can access parent's CachedVariables as well.
+> 		○ Consider if this should be tied to ChildSelector at all. Perhaps just adding a way to persist data in the ForgeStateDictionary from the tree would be cool.
+> 			§ Perhaps they both could happen though. This would be a helper property to make the feature intention clear. If we decide to add more functionality later for setting ForgeState, we can still do that.
+> 		○ Considerations:
+> 			§ Persisted vs non-persisted
+> 			§ Useable from ChildSelector only or everywhere?
+> 			§ Save as String vs Object
+> 			§ Cache result vs expression itself. Specify if you want to cache the expression result, or reevaluate.
+> 			§ Consider defining at the tree level.
+> 			§ Add flag to dictate behavior of CachedVariable. Whether or not to reevaluate each time. Could be unclear what the behavior is by default, make sure to set up the right expectations.
+> 		○ Issue with tree structure
+> 			§ How to enforce that people are calling it at the right time? For example, the expression could GetOutput of a TreeNode that hasn't executed yet.
+> 		○ Issue with node structure
+> 			§ If we decide to persist, not having good discoverability on parent nodes persisted data.
+> 		○ Example Old way:
+> 	                ""ChildSelector"": [
+> 	                    {
+> 	                        ""ShouldSelect"": ""C#|(await Session.GetLastActionResponseAsync()).Status == \""Failure\"""",
+> 	                        ""Child"": ""SoC_HS_RebootOnly_Failure""
+> 	                    },
+> 	                    {
+> 	                        ""ShouldSelect"": ""C#|(await Session.GetLastActionResponseAsync()).Status == \""Timeout\"""",
+> 	                        ""Child"": ""SoC_HS_RebootOnly_Timeout""
+> 	                    },
+> 	                    {
+> 	                        ""ShouldSelect"": ""C#|(await Session.GetLastActionResponseAsync()).Status == \""Success\"""",
+> 	                        ""Child"": ""SoC_HS_RebootOnly_Success""
+> 	                    }
+> 		○ Example New way:
+> 	                ""ChildSelectorVariable"": ""C#|(await Session.GetLastActionResponseAsync()).Status"",
+> 	                ""ChildSelector"": [
+> 	                    {
+> 	                        ""ShouldSelect"": ""C#|Session.CachedVariable == \""Failure\"""",
+> 	                        ""Child"": ""SoC_HS_RebootOnly_Failure""
+> 	                    },
+> 	                    {
+> 	                        ""ShouldSelect"": ""C#|Session.CachedVariable == \""Timeout\"""",
+> 	                        ""Child"": ""SoC_HS_RebootOnly_Timeout""
+> 	                    },
+> 	                    {
+> 	                        ""ShouldSelect"": ""C#|Session.CachedVariable == \""Success\"""",
+> 	                        ""Child"": ""SoC_HS_RebootOnly_Success""
+>                     }
+
+
+Fixes #29.
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,open,2025-05-30T21:32:31Z,,,162360309,https://api.github.com/repos/microsoft/Forge,https://github.com/microsoft/Forge/pull/64,19,1.0,True
+3082306112,448,Add Redis caching for LLM calls,"## Summary
+- Add `llm_cache_redis_url` config option and propagate to model builders
+- Setup LangChain RedisCache when creating LLM models
+- Implement manual caching in instructor methods
+- Test new configuration and caching behaviour",OpenAI_Codex,198574046,robbie-portia,closed,2025-05-22T07:10:12Z,2025-05-23T16:59:59Z,2025-05-23T16:59:59Z,902291246,https://api.github.com/repos/portiaAI/portia-sdk-python,https://github.com/portiaAI/portia-sdk-python/pull/448,19,1.0,False
+3197380367,104,Implement context caching system,"## Summary
+- add `MemoryCache`, `RedisCache`, and `ContextCache`
+- extend `EnrichContext` with a `cache` property
+- patch `FastMCP.get_context` in `EnrichMCP`
+- provide new caching example and mention caching in README
+- test cache backend and update example suite
+- finish documentation on caching
+- warn and fall back to request scope when user cache used without token
+
+## Testing
+- `pre-commit run --files docs/api/cache.md examples/caching/README.md examples/caching/app.py src/enrichmcp/cache/__init__.py tests/test_cache.py`
+- `pytest -q`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686589273e44832a9572b181db583a6a",OpenAI_Codex,64661186,simba-git,closed,2025-07-02T22:49:46Z,2025-07-02T23:07:17Z,,958026130,https://api.github.com/repos/featureform/enrichmcp,https://github.com/featureform/enrichmcp/pull/104,19,1.0,False
+2978149205,2533,Add Context Caching Support,"Fixes #2532
+
+This PR adds support for context caching in CrewAI, leveraging LiteLLM's cache_control parameter. This feature improves performance and reduces costs by caching parts of prompts that remain unchanged across multiple API calls.
+
+## Features
+- Added `cache_enabled` and `cache_ttl` parameters to LLM class
+- Modified the LLM.call method to include cache_control in API calls when enabled
+- Added tests to verify caching functionality
+- Updated documentation to explain how to use context caching
+
+Different LLM providers handle caching differently:
+- OpenAI and Deepseek models have prompt caching enabled automatically
+- Anthropic and Gemini require explicit caching instructions
+- Gemini also supports TTL configuration
+
+## Testing
+- Added unit tests for cache_control parameter
+- Ran the full test suite to ensure compatibility
+
+Link to Devin run: https://app.devin.ai/sessions/c0bef5c2769a4078a2087a245034e5b4
+Request by @joao@crewai.com",Devin,158243242,devin-ai-integration[bot],closed,2025-04-07T22:39:49Z,2025-04-16T15:59:50Z,,710601088,https://api.github.com/repos/crewAIInc/crewAI,https://github.com/crewAIInc/crewAI/pull/2533,19,1.0,False
+2959068895,646,feat: implement HTTP caching with mitmproxy's native format,"This PR implements HTTP caching for connectors using mitmproxy. It supports four cache modes, separate read/write directories, and configurable serialization formats including mitmproxy's native format for better interoperability.
+
+Link to Devin run: https://app.devin.ai/sessions/9bbcc89c5dc047cabfe064370d8ca798
+Requested by: Aaron (""AJ"") Steers (aj@airbyte.io)",Devin,158243242,devin-ai-integration[bot],closed,2025-03-30T19:59:25Z,2025-04-24T15:23:57Z,,752526884,https://api.github.com/repos/airbytehq/PyAirbyte,https://github.com/airbytehq/PyAirbyte/pull/646,19,1.0,False
+3239327534,135,implement context caching,"## Summary
+- implement cached content resource and data handling
+- expose cachedContent methods on client & client fake
+- add model enum patch
+- provide tests and fixtures for cached content
+
+## Testing
+- `composer lint`
+- `vendor/bin/phpstan analyse --ansi`
+- `vendor/bin/pest --colors=always`
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+## Summary by CodeRabbit
+
+* **New Features**
+  * Introduced comprehensive cached content management: create, retrieve, list, update, and delete cached contents via the client interface.
+  * Added detailed metadata and list responses for cached content, improving data handling and visibility.
+  * Enhanced HTTP support by adding the PATCH method for partial updates.
+* **Tests**
+  * Delivered extensive unit tests covering all cached content operations and response behaviors for robustness and accuracy.
+<!-- end of auto-generated comment: release notes by coderabbit.ai --",OpenAI_Codex,3524595,michabbb,open,2025-07-17T12:04:24Z,,,755889931,https://api.github.com/repos/google-gemini-php/client,https://github.com/google-gemini-php/client/pull/135,19,1.0,False
+3196526840,1645,Investigate caching options for from_provider(),"> feat: add native caching support to from_provider
+
+## Describe your changes
+
+This PR introduces a native caching mechanism, allowing users to easily integrate various caching strategies with `from_provider`.
+
+Key changes include:
+- **New `instructor.cache` module**: Provides `BaseCache` interface and concrete implementations (`AutoCache` (in-process LRU), `DiskCache`, `RedisCache`).
+- **Schema-aware cache keys**: `make_cache_key` ensures that any changes to the Pydantic response model's fields or descriptions automatically bust the cache.
+- **Integrated into `patch`**: Caching logic is injected into `instructor/patch.py` for both synchronous and asynchronous calls, occurring *before* the retry mechanism.
+- **`from_provider` API**: The `from_provider` function now accepts `cache` and `cache_ttl` keyword arguments, which are propagated to the underlying client.
+- **Documentation**: The `docs/blog/posts/caching.md` has been updated to highlight the new built-in caching capabilities.
+- **Tests**: Unit tests for cache key invalidation and an integration test demonstrating cache functionality with a mocked provider have been added.
+
+This allows users to simply pass a cache instance to `from_provider` to enable caching, e.g., `from_provider(..., cache=AutoCache())`.
+
+## Issue ticket number and link
+
+## Checklist before requesting a review
+
+- [x] I have performed a self-review of my code
+- [x] If it is a core feature, I have added thorough tests.
+- [x] If it is a core feature, I have added documentation.
+<!-- ELLIPSIS_HIDDEN -->
+
+
+----
+
+> [!IMPORTANT]
+> Introduces native caching support for `from_provider` with new cache implementations, API changes, and updated documentation and tests.
+> 
+>   - **Caching Mechanism**:
+>     - Adds `instructor.cache` module with `BaseCache`, `AutoCache`, `DiskCache`, and `RedisCache`.
+>     - `make_cache_key` generates schema-aware cache keys to auto-bust cache on model changes.
+>     - Integrates caching into `instructor/patch.py` for sync/async calls before retry logic.
+>   - **API Changes**:
+>     - `from_provider` now accepts `cache` and `cache_ttl` arguments.
+>   - **Documentation**:
+>     - Updates `docs/blog/posts/caching.md` to include new caching features.
+>   - **Testing**:
+>     - Adds unit tests for cache key invalidation and integration tests with mocked providers.
+> 
+> <sup>This description was created by </sup>[<img alt=""Ellipsis"" src=""https://img.shields.io/badge/Ellipsis-blue?color=175173"">](https://www.ellipsis.dev?ref=567-labs%2Finstructor&utm_source=github&utm_medium=referral)<sup> for e60c46a29adf342cda3f50010a49f054b8a2003d. You can [customize](https://app.ellipsis.dev/567-labs/settings/summaries) this summary. It will automatically update as commits are pushed.</sup>
+
+
+<!-- ELLIPSIS_HIDDEN -->",Cursor,4852235,jxnl,closed,2025-07-02T16:43:11Z,2025-07-07T18:50:34Z,,653589102,https://api.github.com/repos/567-labs/instructor,https://github.com/567-labs/instructor/pull/1645,19,1.0,False
+3182184191,3077,Fix performance issue: cache agent knowledge to avoid reloading on every kickoff,"
+# Fix: Cache agent knowledge to prevent unnecessary reloading on repeated kickoffs
+
+## Summary
+
+This PR implements a caching mechanism in the `Agent.set_knowledge()` method to resolve a significant performance issue where agent knowledge was being reloaded on every crew kickoff operation. The issue was occurring in `crew.py` line 645 where knowledge sources were being processed (chunked, embedded, stored) unnecessarily on each kickoff, causing substantial performance overhead.
+
+**Key Changes:**
+- Added knowledge state tracking with private attributes `_knowledge_loaded`, `_last_embedder`, `_last_knowledge_sources`
+- Modified `set_knowledge()` to skip reloading when knowledge hasn't changed
+- Added `reset_knowledge_cache()` method for explicit cache clearing when needed
+- Added comprehensive test coverage for caching behavior and edge cases
+
+The caching mechanism intelligently detects when knowledge needs to be reloaded (when sources or embedder changes) while preventing redundant processing when the same agent is used across multiple kickoffs.
+
+## Review & Testing Checklist for Human
+
+- [ ] **Verify cache invalidation logic** - Test that knowledge is properly reloaded when knowledge sources or embedder configurations change, and NOT reloaded when they stay the same
+- [ ] **End-to-end performance testing** - Create a crew with knowledge sources and run multiple kickoffs to verify the performance improvement actually occurs
+- [ ] **Test edge cases** - Verify behavior with different knowledge source types, embedder configurations, and the `reset_knowledge_cache()` method
+- [ ] **Backward compatibility** - Ensure existing workflows still work correctly with the new caching behavior
+
+**Recommended Test Plan:**
+1. Create an agent with knowledge sources (e.g., StringKnowledgeSource)
+2. Run crew.kickoff() multiple times and measure/verify that knowledge loading only happens once
+3. Change knowledge sources mid-way and verify knowledge gets reloaded
+4. Test with different embedder configurations to ensure cache invalidation works
+
+---
+
+### Diagram
+
+```mermaid
+graph TD
+    crew[src/crewai/crew.py]
+    agent[src/crewai/agent.py]:::major-edit
+    knowledge[src/crewai/knowledge/knowledge.py]:::context
+    agent_tests[tests/agent_test.py]:::major-edit
+    
+    crew -->|calls set_knowledge| agent
+    agent -->|creates/caches| knowledge
+    agent_tests -->|tests caching behavior| agent
+    
+    subgraph ""Agent Caching Logic""
+        cache_check[Check _knowledge_loaded flag]
+        compare_state[Compare _last_embedder & _last_knowledge_sources]
+        skip_load[Skip knowledge loading]
+        load_knowledge[Load knowledge & update cache]
+        
+        cache_check --> compare_state
+        compare_state -->|same| skip_load
+        compare_state -->|different| load_knowledge
+    end
+    
+    subgraph Legend
+        L1[Major Edit]:::major-edit
+        L2[Minor Edit]:::minor-edit  
+        L3[Context/No Edit]:::context
+    end
+
+classDef major-edit fill:#90EE90
+classDef minor-edit fill:#87CEEB
+classDef context fill:#FFFFFF
+```
+
+### Notes
+
+
+- **Performance Impact**: This fix addresses issue #3076 where repeated kickoffs caused significant performance degradation due to unnecessary knowledge reprocessing
+- **Cache Strategy**: Uses simple state comparison (embedder config + knowledge sources) to determine when cache is valid
+- **Memory Considerations**: Cache stores references to knowledge sources and embedder configs - monitor for potential memory usage in long-running applications
+- **Thread Safety**: Current implementation is not thread-safe - consider this if agents are used in multi-threaded environments
+",Devin,158243242,devin-ai-integration[bot],closed,2025-06-27T09:53:02Z,2025-07-05T16:03:29Z,,710601088,https://api.github.com/repos/crewAIInc/crewAI,https://github.com/crewAIInc/crewAI/pull/3077,19,1.0,True
+3069006084,106,feat: add caching layer for frequent identical requests,"# Caching Layer for Identical Requests
+
+This PR adds a caching layer to reduce redundant processing of identical LLM requests:
+
+- Added caching configuration fields to the project table
+- Created API endpoints to toggle and configure caching
+- Implemented Redis-based caching for identical chat requests
+- Made caching configurable on a per-project basis
+- Applied schema changes using pnpm push
+
+Caching can be configured:
+- Enable/disable via API
+- Set cache duration (10 seconds to 1 year)
+
+Link to Devin run: https://app.devin.ai/sessions/670ba155336747678916872d5b707685
+Requested by: Luca Steeb
+",Devin,158243242,devin-ai-integration[bot],closed,2025-05-16T13:23:31Z,2025-05-16T17:47:11Z,2025-05-16T17:47:11Z,965250949,https://api.github.com/repos/theopenco/llmgateway,https://github.com/theopenco/llmgateway/pull/106,19,1.0,False
+3069147854,1561,Add caching for RunPod PDF markdown results in GCS,"# PDF RunPod Result Caching
+
+This PR adds caching for RunPod markdown results from PDF conversion in Google Cloud Storage (GCS).
+
+## Changes:
+- Created a new module for PDF caching functions that hash PDF content and use the hash as a cache key
+- Modified the PDF engine to check for cached results before calling RunPod
+- Added tests for the caching functionality
+
+## Testing:
+- Added unit tests for the caching functionality
+- Manually tested with PDF documents to verify cache hits/misses
+
+Link to Devin run: https://app.devin.ai/sessions/4c34ee13ee9448f69efffa88f7952a2c
+Requested by: thomas@sideguide.dev
+",Devin,158243242,devin-ai-integration[bot],closed,2025-05-16T14:20:52Z,2025-05-16T15:04:38Z,2025-05-16T15:04:38Z,787076358,https://api.github.com/repos/mendableai/firecrawl,https://github.com/mendableai/firecrawl/pull/1561,19,1.0,False
+3239609997,35,Implement unbound dns caching,Implement unbound dns caching,Cursor,100861363,Bandit-HaxUnit,open,2025-07-17T13:30:47Z,,,465787727,https://api.github.com/repos/Bandit-HaxUnit/haxunit,https://github.com/Bandit-HaxUnit/haxunit/pull/35,19,0.327987508506991,False
+3125029980,1181,Implement asynchronous API calls for file and message creation in environment.py,"This PR addresses the performance issue where API calls to create messages and files were taking too long by implementing asynchronous execution with concurrent processing.
+
+## Problem
+When agents make multiple tool calls or create multiple files, the synchronous API calls were executed sequentially, causing significant delays:
+- 5 tool calls × 200ms each = 1000ms total execution time
+- Multiple file uploads processed one at a time
+- Poor user experience due to high latency
+
+## Solution
+Added comprehensive async support while maintaining full backward compatibility:
+
+### Concurrent Execution
+- Tool call responses now created concurrently using `asyncio`
+
+### Configuration & Fallback
+- New `ASYNC_API_CALLS` environment variable (default: `true`)
+
+## Backward Compatibility
+- ✅ All original synchronous methods preserved unchanged
+- ✅ No breaking changes to existing API
+- ✅ Opt-in async execution via environment variable
+
+## Usage
+```bash
+# Enable async API calls (default)
+export ASYNC_API_CALLS=true
+
+# Disable if needed
+export ASYNC_API_CALLS=false
+```
+
+Fixes #1180.
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,closed,2025-06-06T14:54:51Z,2025-06-07T21:04:30Z,2025-06-07T21:04:30Z,797493401,https://api.github.com/repos/nearai/nearai,https://github.com/nearai/nearai/pull/1181,19,0.32670934926826284,False
+3105225147,68,Fix provider initialization reuse,"## Summary
+- cache provider instances for reuse
+- use cached provider instances when handling chat completion and image generation requests
+
+## Testing
+- `pytest -q` *(fails: ModuleNotFoundError: No module named 'cloudscraper')*
+
+------
+https://chatgpt.com/codex/tasks/task_b_683acdb9079c8327a553efccf9e535b3",OpenAI_Codex,158988478,OEvortex,closed,2025-05-31T09:40:29Z,2025-05-31T09:41:55Z,2025-05-31T09:41:55Z,763886910,https://api.github.com/repos/OEvortex/Webscout,https://github.com/OEvortex/Webscout/pull/68,19,0.12994346801678683,False
+3165644329,144,Investigate ai prompt caching issue,"Anthropic's prompt caching mechanism requires the `cacheControl` tag to be applied to a message block. Previously, the large `STATIC_SYSTEM_PROMPT` was passed via the `system` parameter in `api/chat.ts`, which does not support this tag. The only message carrying the tag was the smaller dynamic system message, which typically fell below the 1024-token minimum required for caching.
+
+To address this in `api/chat.ts`:
+*   The `staticSystemPrompt` was converted into an explicit system message object, `staticSystemMessage`.
+*   `providerOptions: { anthropic: { cacheControl: { type: ""ephemeral"" }}}` was added to `staticSystemMessage`.
+*   The `system: staticSystemPrompt` parameter was removed from the `streamText` call.
+*   The `enrichedMessages` array was reordered to `[staticSystemMessage, dynamicSystemMessage, ...messages]`.
+
+These changes ensure the substantial static prompt is now correctly tagged and included as a cacheable message, allowing Claude Sonnet to utilize its prompt cache and reflect `cacheCreationInputTokens`/`cacheReadInputTokens` in usage metadata.",Cursor,2830514,ryokun6,closed,2025-06-22T04:14:33Z,2025-06-22T04:14:40Z,2025-06-22T04:14:40Z,923332984,https://api.github.com/repos/ryokun6/ryos,https://github.com/ryokun6/ryos/pull/144,19,0.12916758771800083,False
+3210823906,3119,feat: add native DeepSeek API support,"
+# Add Native DeepSeek API Support
+
+## Summary
+
+This PR implements native DeepSeek API support in CrewAI, addressing issue #3118. The implementation enables users to use DeepSeek models directly through their official API endpoints instead of requiring OpenRouter as a proxy.
+
+**Key Changes:**
+- Added DeepSeek provider configuration to CLI constants with API key prompt
+- Added 5 DeepSeek models to CLI model selection (`deepseek-chat`, `deepseek-coder`, `deepseek-r1`, `deepseek-v3`, `deepseek-reasoner`)
+- Added context window sizes (128k) for all DeepSeek models
+- Created comprehensive integration tests (11 test cases)
+
+**Benefits:**
+- Lower latency (direct API calls vs OpenRouter proxy)
+- Potentially lower costs
+- Better reliability with official API endpoints
+- Seamless CLI integration with `crewai create crew`
+
+## Review & Testing Checklist for Human
+
+⚠️ **Critical** - This PR passes CI but requires real-world validation:
+
+- [ ] **End-to-end testing with real DeepSeek API key** - Test the full workflow from CLI setup to model usage
+- [ ] **Verify context window sizes are accurate** - All models are set to 128k but this may not be correct for all models
+- [ ] **Test CLI workflow** - Run `crewai create crew` and verify DeepSeek appears in provider/model selection
+- [ ] **Error handling validation** - Test with invalid API keys and verify error messages are helpful
+- [ ] **Model availability check** - Confirm all 5 listed models are actually available via DeepSeek API
+
+**Recommended test plan:**
+1. Set up DeepSeek API key in environment 
+2. Run `crewai create crew` and select DeepSeek provider
+3. Create a simple crew that uses DeepSeek models
+4. Execute the crew and verify it works end-to-end
+5. Test with different DeepSeek models to ensure they all work
+
+---
+
+### Diagram
+
+```mermaid
+%%{ init : { ""theme"" : ""default"" }}%%
+graph TB
+    CLI[""src/crewai/cli/constants.py<br/>CLI Configuration""]:::major-edit
+    LLM[""src/crewai/llm.py<br/>LLM Core""]:::major-edit
+    Tests[""tests/test_deepseek_integration.py<br/>Integration Tests""]:::major-edit
+    
+    BaseLLM[""src/crewai/llms/base_llm.py<br/>Base LLM Class""]:::context
+    LiteLLM[""LiteLLM Library<br/>External Dependency""]:::context
+    
+    CLI -->|""Configures DeepSeek provider""| LLM
+    LLM -->|""Extends functionality""| BaseLLM
+    LLM -->|""Uses for API calls""| LiteLLM
+    Tests -->|""Tests integration""| CLI
+    Tests -->|""Tests integration""| LLM
+    
+    
+    subgraph Legend
+        L1[Major Edit]:::major-edit
+        L2[Minor Edit]:::minor-edit  
+        L3[Context/No Edit]:::context
+    end
+    
+    classDef major-edit fill:#90EE90
+    classDef minor-edit fill:#87CEEB
+    classDef context fill:#FFFFFF
+```
+
+### Notes
+
+- **Session Info**: Requested by João (joao@crewai.com) via Slack
+- **Devin Session**: https://app.devin.ai/sessions/a3cbabc547ae41d5b8d080fa0ce1e1f4
+- **Testing Limitation**: Implementation was tested with unit tests only - no real DeepSeek API calls were made during development
+- **LiteLLM Dependency**: This integration relies on LiteLLM's DeepSeek support (verified to work but not extensively tested)
+- **Context Window Assumption**: All models set to 128k context window - this should be verified against DeepSeek's official documentation
+- **AI Code Review**: An AI-generated code review comment was added with suggestions for improvements (versioning, error handling, documentation)
+",Devin,158243242,devin-ai-integration[bot],closed,2025-07-08T02:43:14Z,2025-07-17T16:23:51Z,,710601088,https://api.github.com/repos/crewAIInc/crewAI,https://github.com/crewAIInc/crewAI/pull/3119,19,0.11987957394006948,True
+3052357500,185,Use gemini-flash-lite model for app name and commit message generation,"# Use gemini-flash-lite model for app name and commit message generation
+
+Implements the request to use the faster `gemini-flash-lite` model for app name and commit message generation to improve performance.
+
+## Changes
+
+- Modified the `process` method in `TrpcAgentSession` class to use the `gemini-flash-lite` model specifically for app name and commit message generation
+- Created a dedicated LLM client with the flash lite model for these operations
+- The implementation is minimally invasive, only modifying the necessary code
+
+## Testing
+
+Due to environment setup issues, I was unable to run the tests locally. However, the changes are minimal and focused only on switching the model used for name and commit generation.
+
+The implementation follows the pattern established in PR #168 which added the app_name field to the API response.
+
+Link to Devin run: https://app.devin.ai/sessions/57d1256b0afa497ca9bd506c9c230c7e
+
+Requested by: evgenii@neon.tech
+",Devin,158243242,devin-ai-integration[bot],closed,2025-05-09T14:30:54Z,2025-05-09T16:55:20Z,2025-05-09T16:55:20Z,913914262,https://api.github.com/repos/appdotbuild/agent,https://github.com/appdotbuild/agent/pull/185,19,0.1131286051585881,False
+2895289652,2281,Fix issue 2279: Prevent multiple OtelBatchSpanProcessor threads,"This PR fixes issue #2279 by implementing a singleton pattern for the Telemetry class to ensure that the OtelBatchSpanProcessor is initialized only once per import lifecycle, not per function call.
+
+## Problem
+Each time a function is called within a FastAPI endpoint that dynamically creates agents, a new OtelBatchSpanProcessor thread is spawned. Over multiple requests, this leads to excessive thread creation, potentially causing performance issues and memory leaks.
+
+## Solution
+Implemented a singleton pattern for the Telemetry class to ensure only one instance is created, which means the OtelBatchSpanProcessor is initialized only once.
+
+## Testing
+Added tests to verify that the Telemetry class is a singleton and that only one instance is created, even when accessed from multiple threads.
+
+Link to Devin run: https://app.devin.ai/sessions/ca321c65b8ae4eb5961c4adc533635c0
+Requested by: research-boy",Devin,158243242,devin-ai-integration[bot],closed,2025-03-04T19:58:40Z,2025-03-13T15:26:56Z,,710601088,https://api.github.com/repos/crewAIInc/crewAI,https://github.com/crewAIInc/crewAI/pull/2281,19,0.10960481009642652,False
+3108570703,70,Improve TTI provider reliability,"## Summary
+- verify proxies when fetching from ProxyFox
+- retry requests with new proxies on failure
+
+## Testing
+- `ruff check webscout/Provider/TTI/utils.py webscout/Provider/OPENAI/autoproxy.py`
+- `pytest -q` *(fails: ModuleNotFoundError: No module named 'cloudscraper')*
+
+------
+https://chatgpt.com/codex/tasks/task_b_683d2b735bb083278874be4819ce945d",OpenAI_Codex,158988478,OEvortex,closed,2025-06-02T05:06:21Z,2025-06-02T05:08:38Z,2025-06-02T05:08:38Z,763886910,https://api.github.com/repos/OEvortex/Webscout,https://github.com/OEvortex/Webscout/pull/70,19,0.10111992688099664,False
+3240738542,38,Optimize recursive dns bruteforce method,"Refactor `_recursive_dnsx_bruteforce` method to enhance reliability, performance, and resource management.
+
+The previous implementation suffered from race conditions due to shared file I/O, inefficient memory usage from duplicate data, and lacked robust error handling and progress tracking. This refactor addresses these issues by introducing thread-safe operations, proper deduplication, adaptive threading, and comprehensive resource management.",Cursor,100861363,Bandit-HaxUnit,open,2025-07-17T19:52:50Z,,,465787727,https://api.github.com/repos/Bandit-HaxUnit/haxunit,https://github.com/Bandit-HaxUnit/haxunit/pull/38,19,0.09545939998164799,False

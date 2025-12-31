@@ -1,0 +1,222 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3245899488,10505,Improve Lua transpiler,"## Summary
+- inline builtin operations in Lua emitter
+- remove helper tracking flags
+- update Lua tasks checklist
+- refresh several Lua golden files
+
+## Testing
+- `go build -tags slow ./transpiler/x/lua`
+- `go test -tags slow ./transpiler/x/lua -run TestLuaTranspiler_VMValid_Golden -count=1` *(fails: 50 passed, 50 failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c585681a48320921bdf1813ddeaef",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T03:14:22Z,2025-07-20T03:14:45Z,2025-07-20T03:14:45Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10505,20,1.0,True
+3262693853,13026,Add Lua benchmarks for Rosetta tasks 46-55 and streamline helpers,"## Summary
+- generate benchmark output for Rosetta programs 46-55
+- update Lua ROSETTA progress table with timings
+- include benchmark output files in repo
+- refactor Lua transpiler so helper functions are only emitted when referenced
+
+## Testing
+- `MOCHI_BENCHMARK=1 go test ./transpiler/x/lua -tags slow -run Rosetta -index=46`
+- `MOCHI_BENCHMARK=1 go test ./transpiler/x/lua -tags slow -run Rosetta -index=52`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_688351b2e6888320a180d5e8794397dc",OpenAI_Codex,1218621,tamnd,closed,2025-07-25T10:05:36Z,2025-07-25T10:05:49Z,2025-07-25T10:05:49Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/13026,20,1.0,False
+3241715810,9459,Improve Lua compiler,"## Summary
+- inline print handling instead of `__print`
+- remove `__eq` helper and use native equality checks
+- adjust set operation helpers to compare values directly
+- document progress in Lua TASKS
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879bc1311908320b634d6f0bf4979cb",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:28:21Z,2025-07-18T03:28:33Z,2025-07-18T03:28:33Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9459,20,1.0,False
+3241695471,9440,Improve Lua compiler membership optimization,"## Summary
+- optimize Lua compiler for `in`, `contains`, and `starts_with`
+- add list type helpers
+- update generated Lua sources
+- log progress in TASKS
+
+## Testing
+- `go test ./compiler/x/lua -run TestLuaCompiler_VMValid_Golden -tags=slow -update`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879b6718cec8320896bbdfa10b01db8",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:13:58Z,2025-07-18T03:14:12Z,2025-07-18T03:14:11Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9440,20,1.0,False
+3218429525,7246,Improve Lua compiler output,"## Summary
+- update Lua compiler to generate inline print helpers instead of using `__print`
+- sort map keys in Lua for loops for deterministic output
+
+## Testing
+- `go test ./compiler/x/lua -run TestLuaCompiler_ValidPrograms/right_join -tags slow -count=1`
+- `go test ./compiler/x/lua -run TestLuaCompiler_ValidPrograms/basic_compare -tags slow -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686f76439cc88320a198afdb8c5076cf",OpenAI_Codex,1218621,tamnd,closed,2025-07-10T08:38:11Z,2025-07-10T08:38:20Z,2025-07-10T08:38:20Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7246,20,1.0,False
+3239403987,9329,Lua compiler improvements,"## Summary
+- optimize Lua compiler to skip helper calls when indexing simple lists or strings
+- update runtime boolean printing to match golden expectations
+- regenerate Lua machine outputs
+- note new capabilities in Lua machine README
+
+## Testing
+- `go test -tags slow ./compiler/x/lua -run VMValid_Golden` *(fails: 73 passed, 27 failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878e44977a88320a02aad168cf0272c",OpenAI_Codex,1218621,tamnd,closed,2025-07-17T12:27:28Z,2025-07-17T12:28:00Z,2025-07-17T12:28:00Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9329,20,1.0,True
+3259716066,12649,Add main handling and faster list append for Lua transpiler,"## Summary
+- support programs with `main` by emitting a call at the end of generated Lua
+- optimize `append` translation to mutate the list instead of copying
+- add Lua translation for `pow` builtin
+- mark `brilliant-numbers` as transpiled
+- add transpiled Lua and expected output for `brilliant-numbers`
+
+## Testing
+- `go test ./transpiler/x/lua -run Rosetta -index 137 -tags slow -update -v` *(fails: took too long, interrupted)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68821c2110f48320ad9295c7092004e9",OpenAI_Codex,1218621,tamnd,closed,2025-07-24T12:23:37Z,2025-07-24T12:25:14Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/12649,20,1.0,True
+3224983644,7926,Improve Lua codegen,"## Summary
+- reduce runtime helper usage in Lua compiler
+- update generated Lua output
+- mark helper reduction done in README
+
+## Testing
+- `go test ./...`
+- `GOFLAGS=-tags=slow go run scripts/compile_lua.go`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6871f5b0e8448320b54b959a482d541f",OpenAI_Codex,1218621,tamnd,closed,2025-07-12T07:17:42Z,2025-07-12T07:28:03Z,2025-07-12T07:28:03Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7926,20,1.0,False
+3216682526,6920,Lua compiler improvements,"## Summary
+- make the Lua compiler inline append operations when a list literal is given
+- regenerate Lua machine outputs with updated compiler
+
+## Testing
+- `go test -tags slow ./compiler/x/lua -run TestLuaCompiler_ValidPrograms -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ea73dc9208320b8742e6cc573b62c",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T17:41:35Z,2025-07-09T17:41:48Z,2025-07-09T17:41:47Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/6920,20,1.0,False
+3261739055,12875,Add benchmarking mode for Lua transpiler,"## Summary
+- update Lua transpiler with optional benchmark wrapping
+- collect real execution time and memory usage
+- support `MOCHI_BENCHMARK` in golden tests
+- regenerate `ROSETTA.md` checklist as a table
+- run benchmark for program 1 (`100-doors-2`)
+
+## Testing
+- `MOCHI_BENCHMARK=1 go test -v ./transpiler/x/lua -run Rosetta -index 1 -tags slow -count=1 -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6882e1921d7083208c68f8db0897ee19",OpenAI_Codex,1218621,tamnd,closed,2025-07-25T02:07:34Z,2025-07-25T02:07:49Z,2025-07-25T02:07:49Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/12875,20,1.0,False
+3246418740,10854,Improve Lua transpiler printing,"## Summary
+- use `%d` when printing ints
+- drop needless string.format wrapping when possible
+
+## Testing
+- `go test -tags slow ./transpiler/x/lua -run TestTranspile_PrintHello -count=1`
+- `go test -tags slow ./transpiler/x/lua -run TestTranspile_BinaryPrecedence -count=1`
+- `go test -tags slow ./transpiler/x/lua -run TestLuaTranspiler_VMValid_Golden -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_687cfad09b90832085a91bb088f18cb7",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T14:36:08Z,2025-07-20T14:36:19Z,2025-07-20T14:36:19Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10854,20,0.2131071177712667,False
+3245852667,10435,Improve C transpiler print logic,"## Summary
+- enhance `PrintStmt.emit` to combine args in a single printf when possible
+- update TASKS progress entry
+- update golden output for `break_continue` to reflect new printf pattern
+
+## Testing
+- `go test ./transpiler/x/c -run TestTranspilerGolden -update -tags slow`
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c4a5758488320ac93b54236efc32e",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T02:06:44Z,2025-07-20T02:06:56Z,2025-07-20T02:06:56Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10435,20,0.1947074091759065,False
+3245861239,10448,Improve Ruby transpiler output,"## Summary
+- adjust `AvgExpr` to use integer division
+- simplify `convertPrintCall` so booleans print as `true`/`false`
+- update golden results for the affected tests
+- add progress entry in `TASKS.md`
+- update VM expected output for `map_literal_dynamic`
+
+## Testing
+- `go test -tags=slow ./transpiler/x/rb -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c4c6fe2848320b0a0ff3db91750de",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T02:20:31Z,2025-07-20T02:20:45Z,2025-07-20T02:20:45Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10448,20,0.18791389608867834,False
+3245927515,10515,Improve C transpiler output,"## Summary
+- fine tune C transpiler printing logic
+- tighten generated for loop syntax
+- update C transpiler progress log
+- regenerate C golden files for 41 tests
+
+## Testing
+- `go test ./transpiler/x/c -tags slow -run TestTranspilerGolden -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c6061db608320bd1a56c95adc81c2",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T03:31:35Z,2025-07-20T03:31:54Z,2025-07-20T03:31:54Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10515,20,0.15763429835235063,False
+3246432388,10855,Improve Go transpiler printing,"## Summary
+- add string trimming and consistent float handling to Go transpiler
+- update generated Go outputs and test results
+- record new progress with timestamp
+
+## Testing
+- `go test -tags slow ./transpiler/x/go`
+
+------
+https://chatgpt.com/codex/tasks/task_e_687cfd11f7788320a303f3a6ca2a7b5c",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T14:56:42Z,2025-07-20T14:56:53Z,2025-07-20T14:56:53Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10855,20,0.14406130652142435,False
+3246106469,10719,Add constant map folding to C transpiler,"## Summary
+- enhance the C transpiler with constant map folding
+- add six map-related golden tests
+- document progress and update checklist
+
+## Testing
+- `go test ./transpiler/x/c -run TestTranspilerGolden -tags slow -update`
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c8ff5af7c83209678496b81d46c80",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T07:22:09Z,2025-07-21T09:45:19Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10719,20,0.13240453330224952,False
+3246012916,10625,Add list set ops constant folding to C transpiler,"## Summary
+- support constant list set operations in the C transpiler
+- run golden tests for `list_set_ops.mochi`
+- document progress and checklist updates
+
+## Testing
+- `go test ./transpiler/x/c -run TestTranspilerGolden -update -tags=slow`
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c7e538f708320a9e9a074f18500a7",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T05:38:05Z,2025-07-20T05:38:15Z,2025-07-20T05:38:15Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10625,20,0.13039527557001815,False
+3245834819,10404,Improve C transpiler membership handling,"## Summary
+- enhance the C transpiler to inline membership checks for constant lists
+- record latest progress in TASKS.md
+
+## Testing
+- `go test -tags slow ./transpiler/x/c`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_687c466956608320a5e2dc01e47ecaf2",OpenAI_Codex,1218621,tamnd,closed,2025-07-20T01:37:26Z,2025-07-20T01:37:37Z,2025-07-20T01:37:37Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/10404,20,0.1300233078195425,False
+3275629277,14800,Lowercase tags; drop method body,"## Summary
+- remove the `body` slice from `Method` in the C# AST inspector
+- regenerate all C# golden AST files without the `body` field
+
+## Testing
+- `go test ./tools/json-ast/x/cs -tags slow -update`
+- `go test ./tools/json-ast/x/cs -tags slow`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_688986924e308320940d6a32f3905abf",OpenAI_Codex,1218621,tamnd,closed,2025-07-30T04:29:48Z,2025-07-30T04:30:23Z,2025-07-30T04:30:23Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/14800,20,0.0594069264057965,False
+3276217466,14939,Refactor json-ast go nodes,"## Summary
+- make Go json-ast nodes omit positions unless `IncludePositions` is enabled
+- regenerate Go cross_join AST without position info
+
+## Testing
+- `go test -tags slow ./tools/json-ast/x/go`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6889d82efa60832099ae07638fcec6bf",OpenAI_Codex,1218621,tamnd,closed,2025-07-30T08:52:21Z,2025-07-30T08:52:32Z,2025-07-30T08:52:32Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/14939,20,0.04933857573120149,False

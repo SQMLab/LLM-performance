@@ -1,0 +1,363 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3185679015,3924,Improve join optimization,"## Summary
+- detect more equality cases in join condition, handling `+0`/`-0`
+- benchmark join with `+0` arithmetic to verify optimization
+
+## Testing
+- `go test ./... -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685f6f460e188320906298a7c44ae3ad",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T02:43:12Z,2025-07-01T03:05:49Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3924,5,1.0,False
+3241710800,9455,Improve PHP join compilation,"## Summary
+- compile left_join_multi/right_join/outer_join queries without `_query`
+- note PHP join improvements in README
+
+## Testing
+- `go test ./compiler/x/php -run TestPHPCompiler_VMValid_Golden -count=1 -tags=slow`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879bc3a2b708320b51e0b494bd2c734",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:24:48Z,2025-07-18T03:25:09Z,2025-07-18T03:25:09Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9455,5,1.0,False
+3186409173,4004,Optimize inner joins,"## Summary
+- improve `compileJoinQuery` to pick smaller side for non-equality inner joins
+
+## Testing
+- `go test -tags slow ./... -update` *(fails: go run error: exit status 1)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_686177eacff08320b33533ff0f3ed0c7",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T17:47:36Z,2025-07-01T12:01:39Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4004,5,1.0,False
+3227161026,8628,Add map-based left join in Go compiler,"## Summary
+- implement `eqJoinKeysTyped` helper for join key types
+- generate optimized map-based left join queries in the Go backend
+- regenerate Go machine output for left join programs
+- mark left join task complete
+- regenerate TPCH q1 Go code
+
+## Testing
+- `go test ./compiler/x/go -tags slow -run TPCH -update -count=1`
+- `go test ./compiler/x/go -tags slow -run ValidPrograms/left_join -update -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_687463f509e8832092aeadb4bfabfc56",OpenAI_Codex,1218621,tamnd,closed,2025-07-14T02:31:21Z,2025-07-14T02:31:42Z,2025-07-14T02:31:42Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/8628,5,1.0,True
+3214281732,6522,Improve Elixir compiler join handling,"## Summary
+- generate joins without runtime helper when possible
+- print using `inspect` for better map handling
+- update Elixir machine outputs
+
+## Testing
+- `go test -tags slow ./compiler/x/ex`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686dc356b9d88320b85caae44d3a9d14",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T02:27:47Z,2025-07-09T02:29:05Z,2025-07-09T02:29:05Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/6522,5,1.0,False
+3186037439,3949,Optimize hash join code generation,"## Summary
+- reduce bytecode size for simple inner joins
+- add constant list length detection to skip unused branch
+
+## Testing
+- `go fmt ./...`
+- `go test ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686113de63cc8320a8cae6b023442f01",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T10:41:21Z,2025-06-29T10:41:37Z,2025-06-29T10:41:37Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3949,5,1.0,False
+3227169343,8629,Enhance Go backend left join,"## Summary
+- improve Go compiler to special case left join with map lookup
+- regenerate machine output for left_join
+- regenerate tpch/q1 Go output
+- document update in TASKS
+
+## Testing
+- `go test ./compiler/x/go -run ValidPrograms/left_join -tags slow`
+- `go test ./compiler/x/go -run TestGoCompiler_TPCH/q1 -tags slow -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68746832daa88320bfd1e0b391d558cb",OpenAI_Codex,1218621,tamnd,closed,2025-07-14T02:37:50Z,2025-07-14T02:38:21Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/8629,5,1.0,False
+3214278956,6520,Improve Go join compilation,"## Summary
+- improve go query compiler: detect simple left joins so helper is skipped
+- regenerate `left_join.go`
+- note new join behaviour in Go machine README
+
+## Testing
+- `go test ./compiler/x/go -tags slow`
+- `go test ./compiler/x/go -tags slow -run TestGoCompiler_ValidPrograms/left_join`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686dc2fa08ac8320bece11662d1b2a58",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T02:26:08Z,2025-07-09T02:26:26Z,2025-07-09T02:26:26Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/6520,5,1.0,False
+3216964251,7004,Optimize joins in Go backend,"## Summary
+- improve join logic in `compiler/x/go` runtime
+
+## Testing
+- `go test ./compiler/x/go -tags slow` *(fails: cannot use _ as value or type)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ec3cf542483208262312e9f190dbb",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T19:48:47Z,2025-07-09T19:48:58Z,2025-07-09T19:48:58Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7004,5,1.0,False
+3216916039,6987,Optimize Clojure query helpers,"## Summary
+- add helpers for extracting join key expressions
+- emit join key functions in Clojure query compiler
+- speed up `_group_by` using transients
+- use hash join when key functions are provided in `_query`
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ebd073530832087825b793466ef82",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T19:25:09Z,2025-07-09T19:25:21Z,2025-07-09T19:25:21Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/6987,5,1.0,False
+3241758610,9484,Improve Clojure join compilation,"## Summary
+- optimize Clojure compiler by translating simple left/right/outer joins to direct comprehensions
+- regenerate outer_join machine translation without `_query` helper
+- update machine README checklist
+- note progress in Clojure TASKS
+
+## Testing
+- `go test -tags slow ./compiler/x/clj -run TestClojureCompiler_VMValid_Golden/outer_join -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879c147cdfc832088f453a112e75963",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:54:44Z,2025-07-18T03:55:13Z,2025-07-18T03:55:13Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9484,5,0.46768839190340017,True
+3216930805,6993,Add hash join optimization for Go backend,"## Summary
+- extend Go runtime `_query` helper with optional hash join support
+- detect simple equality joins and emit `leftKey`/`rightKey` functions
+- new `eqJoinKeys` helper to recognise equality join predicates
+
+## Testing
+- `go test ./compiler/x/go -tags slow -run TestGoCompiler_ValidPrograms -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ebcd8ecfc8320a0253441d3a464f9",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T19:32:09Z,2025-07-09T19:32:24Z,2025-07-09T19:32:23Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/6993,5,0.41198515120054113,False
+3183195813,3870,Improve TPCH query compilation,"## Summary
+- add `_hash_combine` runtime helper for hashing struct keys
+- track element types for query variables when compiling
+- generate struct keys for grouped queries when the key is a map literal
+
+## Testing
+- `go test ./... -tags=slow` *(fails: signal interrupt)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685eaef2a7948320bb16d7ecb29e4d9a",OpenAI_Codex,1218621,tamnd,closed,2025-06-27T15:20:18Z,2025-06-27T15:24:55Z,2025-06-27T15:24:55Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3870,5,0.3950254819943527,False
+3216962602,7003,Improve TS query compile,"## Summary
+- add hash-based join helper in TS runtime
+- detect simple equality joins to use hashed join
+- expose joinEqFields helper
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686ebcf0eeb88320848cda5d4534bc8c",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T19:48:00Z,2025-07-09T19:48:11Z,2025-07-09T19:48:11Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/7003,5,0.38088484478876283,False
+3240935078,280,Resolve db self-join memory bug,"Add comprehensive self-join tests to verify correct behavior and investigate a reported cartesian product bug.
+
+The bug report described self-joins causing memory exhaustion and cartesian products. These new tests, including scenarios with larger datasets and `limit`, demonstrate that the core `db` join logic correctly handles self-joins without producing cartesian products. This suggests the reported issue might stem from the `useLiveQuery` integration or an environment-specific factor, as the underlying join mechanism appears to be working as expected.",Cursor,31130,samwillis,closed,2025-07-17T21:15:07Z,2025-07-18T10:18:19Z,,946895816,https://api.github.com/repos/TanStack/db,https://github.com/TanStack/db/pull/280,5,0.3588424537779724,False
+3186037018,3948,Optimize inner join in VM,"## Summary
+- tune inner join code generation
+- regenerate benchmark results
+- update join benchmark documentation
+
+## Testing
+- `go test ./...`
+- `go run cmd/mochi-bench/main.go`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68611419206083209e3be1b1abf8c6b2",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T10:40:41Z,2025-07-01T03:06:08Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3948,5,0.29616818219474805,False
+3184544966,3893,Improve VM join performance,"## Summary
+- optimize OpAppend to mutate lists in place when safe
+- update query compilation to use in-place append for joins
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_685f6a8120fc83208b4b3d7a0559b324",OpenAI_Codex,1218621,tamnd,closed,2025-06-28T04:16:33Z,2025-06-30T15:09:50Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3893,5,0.20738286693858624,False
+3186007005,3945,Improve join performance with hashed left join,"## Summary
+- add hash-based optimization for left joins
+- regenerate left join IR after optimization
+- update join benchmarks to reflect faster joins
+
+## Testing
+- `go run ./cmd/mochi run tests/vm/valid/inner_join.mochi --ir` *(fails: unknown flag)*
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68610e47c0148320adf72b2fe8c94159",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T10:11:15Z,2025-06-29T10:23:01Z,2025-06-29T10:23:01Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3945,5,0.08470540906389264,False
+3186315425,3985,Add hashed outer join optimization,"## Summary
+- optimize join handling by adding `compileHashOuterJoin`
+- regenerate IR outputs for dataset JOB and VM tests
+
+## Testing
+- `go test -tags slow ./tests/vm -run TestVM_IR -update`
+- `go run ./tools/update_job/main.go`
+- `go run ./tools/update_tpch/main.go` *(fails: index out of range)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_686163e02c688320885f98c03e2e9e81",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:14:00Z,2025-07-01T12:01:57Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3985,5,0.07882003887288107,False
+3186381329,4002,Optimize outer join in VM,"## Summary
+- implement compileHashOuterJoin for hashed full outer join
+- wire outer join optimization into compileJoinQuery
+- document benchmark update for outer joins
+- regenerate `outer_join.ir.out`
+
+## Testing
+- `go build ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861722f141883208bff79fcb7c95f04",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T17:25:32Z,2025-06-29T17:26:25Z,2025-06-29T17:26:25Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4002,5,0.07751050642159571,False
+3186305026,3979,Improve VM join optimizer,"## Summary
+- add hashed right join implementation
+- regenerate IR golden for right join query
+
+## Testing
+- `go test ./tests/vm -tags slow -run '^TestVM_IR/right_join$' -update`
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861603fabc083208abf08472e70a251",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T16:01:05Z,2025-06-29T16:01:18Z,2025-06-29T16:01:18Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3979,5,0.07685635831367424,False
+3186433660,4011,Improve VM join compilation,"## Summary
+- add constant-empty checks before join compilation
+- generate simple nil-right loops for constant empty right side in left join
+- update golden IR outputs
+
+## Testing
+- `go test ./tests/vm -tags slow -run TestVM_IR -update`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6861820b3bfc8320989233ffc16bf14b",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T18:19:28Z,2025-07-01T12:01:37Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/4011,5,0.07172403314878277,False
+3185988908,3943,Optimize VM join loops,"## Summary
+- optimize join loops in `runtime/vm` with `OpLessInt` and cached null constants
+- update join benchmarks
+- regenerate IR golden files for VM tests
+- fold VM constant expressions without importing the interpreter
+
+## Testing
+- `go test ./tests/vm -tags slow -run TestVM_IR -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6860fd4253048320b7a9b041def55989",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T09:57:37Z,2025-06-29T09:58:13Z,2025-06-29T09:58:13Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3943,5,0.06474380471525755,False
+3142771614,2267,Improve SortedSet union,"## Summary
+- optimize `union` in SortedSet
+- avoid re-counting elements by tracking size during tree copy/merge
+
+## Testing
+- `moon fmt`
+- `moon info`
+- `moon test`
+
+------
+https://chatgpt.com/codex/tasks/task_e_684bd59b9ccc8320b5e9a44429fe1b2b",OpenAI_Codex,747051,bobzhang,open,2025-06-13T08:46:02Z,,,749681472,https://api.github.com/repos/moonbitlang/core,https://github.com/moonbitlang/core/pull/2267,5,0.05854169773519469,False
+3186235764,3969,Optimize set operations in VM,"## Summary
+- improve runtime performance of `Union`, `Except`, and `Intersect` opcodes by using map-based lookups
+- regenerate VM IR golden files
+
+## Testing
+- `go test ./...`
+- `go test -tags slow ./tests/vm -run TestVM_IR -update --vet=off`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686141e352588320961acbdd4321c4fa",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T14:41:31Z,2025-06-29T14:41:46Z,2025-06-29T14:41:46Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3969,5,0.054802987974423345,False
+3186289712,3974,Implement jump threading optimization,"## Summary
+- add `foldJumpChains` to collapse chains of jumps in the VM optimizer
+- update a few IR goldens affected by the new optimization
+
+## Testing
+- `go test ./...`
+- `go test ./tests/vm -tags slow -run TestVM_IR -update`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68615b6441988320883c603ef962eaa3",OpenAI_Codex,1218621,tamnd,closed,2025-06-29T15:42:14Z,2025-06-29T15:42:30Z,2025-06-29T15:42:30Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/3974,5,0.05410631862169956,False
+3214280822,6521,Improve Python join code generation,"## Summary
+- improve the Python backend to emit list comprehensions for inner joins
+- regenerate golden machine outputs for inner join programs
+- document new join handling in the Python machine README
+
+## Testing
+- `go test -tags slow ./compiler/x/python -run TestCompilePrograms -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_686dc30703a883208c194f20cb79ae02",OpenAI_Codex,1218621,tamnd,closed,2025-07-09T02:27:09Z,2025-07-09T02:28:52Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/6521,5,0.040954636156292856,True
+3166655793,2686,Add simple interpreter inlining,"## Summary
+- add `inlineCandidates` and `callCounts` maps to Interpreter
+- record small functions as inline candidates
+- count calls and inline hot, pure single-expression functions
+- initialize helper Interpreters with these maps
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6858cbbc7a3483209f88c35706070449",OpenAI_Codex,1218621,tamnd,closed,2025-06-23T03:44:29Z,2025-06-23T05:35:20Z,2025-06-23T05:35:19Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2686,5,0.03967996943222354,False
+3168509434,2721,Optimize interpreter performance,"## Summary
+- cache builtin function table to avoid map allocations
+- add environment pooling helpers for reusing Env objects
+- use AcquireEnv/ReleaseEnv in interpreter for loops, if-statements and function calls
+- lower inline call threshold
+
+## Testing
+- `go test ./...`
+
+------
+https://chatgpt.com/codex/tasks/task_e_68596837f34c83208cb32ac21acf786b",OpenAI_Codex,1218621,tamnd,closed,2025-06-23T14:56:56Z,2025-06-23T15:13:30Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/2721,5,0.03887945512174705,False
+3152227912,1268,Optimize interpreter ops,"## Summary
+- centralize built-in operator implementations in a shared table
+- route applyBinaryValue and applyUnaryValue through this table
+
+## Testing
+- `go fmt ./...`
+- `go test ./...` *(fails: golden mismatch)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_685108101fdc8320a06210f0d1abe097",OpenAI_Codex,1218621,tamnd,closed,2025-06-17T06:29:21Z,2025-06-17T06:35:29Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/1268,5,0.038389887576561775,False
+3242128024,9492,Improve Python compiler list set ops,"## Summary
+- optimize list set operations by unwrapping optional types before deciding whether helpers are needed
+- update compiler test helper indentation
+- regenerate Python machine outputs
+- document recent compiler changes
+
+## Testing
+- `go test -tags slow ./compiler/x/python -run TestPythonCompiler_VMValid_Golden -count=1` *(fails: golden mismatch for several programs)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879c6469d8c83208026d01713bd6f9b",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T06:49:11Z,2025-07-18T06:49:28Z,2025-07-18T06:49:28Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9492,5,0.03659620424981458,False
+3226302090,8385,Improve Go compiler struct reuse,"## Summary
+- enhance Go compiler struct inference so existing structs are reused
+- add `structMatches` helper
+- update checklists for TPCH progress
+- regenerate machine output for `cast_struct` example
+
+## Testing
+- `go test ./compiler/x/go -tags slow -run TestGoCompiler_ValidPrograms`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6873777e9cd48320aa36c8b4718e36ee",OpenAI_Codex,1218621,tamnd,closed,2025-07-13T09:25:31Z,2025-07-13T09:25:49Z,2025-07-13T09:25:49Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/8385,5,0.03423511776624581,False
+3202763859,5067,Improve Python compiler list operations,"## Summary
+- reduce use of runtime helpers for `union`, `union_all`, `except` and `intersect`
+- infer resulting list element type when possible
+
+## Testing
+- `go test ./... --vet=off -run TestPyCompiler_SubsetPrograms -count=1`
+
+------
+https://chatgpt.com/codex/tasks/task_e_6867d5cdcb3c8320b49589ac64cc4233",OpenAI_Codex,1218621,tamnd,closed,2025-07-04T13:31:50Z,2025-07-04T13:32:03Z,2025-07-04T13:32:03Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/5067,5,0.033210860505493295,False
+3241690700,9435,Update Clojure compiler,"## Summary
+- avoid emitting `_cast_struct` and `_cast_struct_list` when the value already matches the target type
+- document the optimization in TASKS
+
+## Testing
+- `go vet ./...`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6879b65a24cc832090f470206870dc82",OpenAI_Codex,1218621,tamnd,closed,2025-07-18T03:11:18Z,2025-07-18T03:11:29Z,2025-07-18T03:11:29Z,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/9435,5,0.033084435737244205,False
+3227405736,8664,Improve Python compiler struct reuse,"## Summary
+- dedupe struct names across query compilation
+- document progress in Python backend tasks and README
+- regenerate Python machine outputs including TPCH q1
+
+## Testing
+- `go test ./compiler/x/python -tags slow -run TestCompilePrograms -count=1`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_68748c5135bc83208038140e4c99bc05",OpenAI_Codex,1218621,tamnd,closed,2025-07-14T05:25:50Z,2025-07-14T05:26:12Z,,985853139,https://api.github.com/repos/mochilang/mochi,https://github.com/mochilang/mochi/pull/8664,5,0.032986435240349894,False

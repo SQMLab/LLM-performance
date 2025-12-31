@@ -1,0 +1,158 @@
+id,number,title,body,agent,user_id,user,state,created_at,closed_at,merged_at,repo_id,repo_url,html_url,Topic,Probability,Representative_document
+3090482540,4355,[Failed] Unable to enable browser notifications immediately after visiting the web page for the first time,"Thanks for assigning this issue to me. I'm starting to work on it and will keep this PR's description up to date as I form a plan and make progress.
+
+Original issue description:
+
+> ### Share your bug report, feature request, or comment.
+> 
+> If you try to enable browser notifications right after visiting an Owncast web page for the first time, you'll get a long loading spinner, and sometimes it'll time out.
+> 
+> I believe this is because it's waiting for the service worker to free up, but the service worker is busy in the background pre-downloading a bunch of assets.
+> 
+> I wonder if we can tell the service worker to stop anything its doing if somebody is trying to enable notifications. It's far more important than caching any of those assets. The reason I set that up to cache assets in the first place was so we wouldn't see loading spinners when you open up modals or other views that are asynchronously loaded, or wait for the emoji to load in one at a time. But if somebody had to cancel that to register for push notifications, it's really no big deal.
+
+
+Fixes #4195.
+
+---
+
+💡 You can make Copilot smarter by setting up custom instructions, customizing its development environment and configuring Model Context Protocol (MCP) servers. Learn more [Copilot coding agent tips](https://gh.io/copilot-coding-agent-tips) in the docs.",Copilot,198982749,Copilot,closed,2025-05-26T08:51:50Z,2025-05-26T08:52:50Z,,266445736,https://api.github.com/repos/owncast/owncast,https://github.com/owncast/owncast/pull/4355,35,1.0,True
+3111689960,1459,[alpha_factory] add i18n precache,"## Summary
+- cache locale JSON files in the Insight demo service worker
+- update build scripts and offline test
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in CollectorRegistry)*
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/sw.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/build.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/manual_build.py alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/test_pwa_offline.py` *(fails: could not fetch hooks)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683e14e79714833394fa05218bb4a081",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-02T21:28:36Z,2025-06-02T21:29:58Z,2025-06-02T21:29:58Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1459,35,1.0,False
+3188284723,2798,[alpha_factory] Update service worker caching,"## Summary
+- cache pyodide assets during service worker install
+- handle external asset failures with local cache fallback
+- bump cache version
+
+## Testing
+- `python scripts/check_python_deps.py`
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ImportError for research_agent and others)*
+- `pre-commit run --files docs/assets/service-worker.js` *(fails: proto-verify, verify-requirements-lock)*
+- `scripts/build_gallery_site.sh` *(fails: Preflight checks failed)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68620c464f6483339524573c94b43ccd",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-30T12:21:20Z,2025-06-30T12:25:12Z,2025-06-30T12:25:12Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2798,35,1.0,False
+3187037212,2796,feat: cache pyodide assets in service worker,"## Summary
+- precache Pyodide runtime files
+- handle external requests with cached fallback
+- bump offline cache version
+
+## Testing
+- `mkdocs build`
+- `./scripts/build_insight_docs.sh` *(fails: Unable to retrieve wasm_llm/wasm-gpt2.tar)*
+- `pre-commit run --files docs/assets/service-worker.js` *(failed to finish due to missing environments)*
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_686207f0d0e48333bdd56cd69274b995",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-30T03:52:13Z,2025-06-30T03:53:13Z,2025-06-30T03:53:13Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2796,35,1.0,False
+3239561220,2920,perf: Add config option `enableResourceCache` to cache dashboard resources locally for faster loading in additional browser tabs,"## Summary
+- add a service worker to cache dashboard bundles
+- register the service worker in login and dashboard entry points
+
+## Testing
+- `npm test`
+- `npm run lint`
+
+
+------
+https://chatgpt.com/codex/tasks/task_e_6878f529c7f0832db6628e25b01b9e02
+
+<!-- This is an auto-generated comment: release notes by coderabbit.ai -->
+## Summary by CodeRabbit
+
+* **New Features**
+  * Introduced an optional browser service worker to cache dashboard assets, improving load performance and enabling offline support for previously visited resources.
+  * Added a configuration option to enable or disable the service worker via the dashboard settings.
+  * Service worker automatically unregisters and clears cache when all dashboard tabs are closed to ensure updates are received.
+
+* **Documentation**
+  * Updated documentation to describe the new browser service worker feature and its configuration.
+<!-- end of auto-generated comment: release notes by coderabbit.ai -->",OpenAI_Codex,5673677,mtrezza,closed,2025-07-17T13:15:15Z,2025-07-18T14:58:56Z,2025-07-18T14:58:56Z,50623416,https://api.github.com/repos/parse-community/parse-dashboard,https://github.com/parse-community/parse-dashboard/pull/2920,35,1.0,True
+3112264968,1484,[alpha_factory] cache runtime assets,"## Summary
+- cache fonts and IPFS JSON using Workbox runtime caching
+- keep runtime caching when building service workers
+- verify cached fonts and IPFS JSON load when offline
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in CollectorRegistry)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683e6b96d6b08333bbf63ad0cd9435d1",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-03T03:36:55Z,2025-06-03T03:37:09Z,2025-06-03T03:37:09Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1484,35,1.0,False
+3206662836,360,Analyze factors causing iOS to kill PWA,"<!-- One very short sentence on the WHAT and WHY of the PR. E.g. ""Remove pathHash attribute because it is confirmed unused."" or ""Add DNS round robin to improve load distribution."" -->
+Implement PWA background optimization for iOS to reduce resource consumption and prevent app termination.
+
+<!-- OPTIONAL: If the WHY of the PR is not obvious, perhaps because it fixed a gnarly bug, explain it in a short paragraph here. E.g. ""Commit a73bb98 introduced a bug where the class list was filtered to only work for MDC files, hence we partially revert it here."" -->
+The application was frequently terminated by iOS when in the background due to continuous resource consumption from active Server-Sent Events (SSE) connections and various timers. This PR introduces a centralized `BackgroundManager` and `SSEManager` to automatically pause/stop these activities when the app transitions to the background, significantly improving its survival rate, reducing battery drain, and enhancing overall system stability. This also includes a version bump to `2.6.3` and cleanup of temporary documentation.",Cursor,51039935,jxxghp,closed,2025-07-06T15:14:31Z,2025-07-06T22:40:43Z,2025-07-06T22:40:43Z,657824656,https://api.github.com/repos/jxxghp/MoviePilot-Frontend,https://github.com/jxxghp/MoviePilot-Frontend/pull/360,35,1.0,True
+3209183782,364,Evaluate app shell model compliance,"<!-- Implement comprehensive PWA optimizations to enhance performance, offline experience, and user installability. -->
+This PR includes critical CSS inlining, refined caching strategies (CacheFirst for App Shell, versioning, cleanup), background sync for offline API requests, and an improved PWA installation prompt with a dedicated offline page.",Cursor,51039935,jxxghp,closed,2025-07-07T14:06:33Z,2025-07-07T14:09:11Z,2025-07-07T14:09:11Z,657824656,https://api.github.com/repos/jxxghp/MoviePilot-Frontend,https://github.com/jxxghp/MoviePilot-Frontend/pull/364,35,1.0,False
+3190642541,2834,Update service worker asset list,"## Summary
+- cache docs HTML pages in the generated service worker
+- bump cache version to v4 and regenerate `service-worker.js`
+
+## Testing
+- `python scripts/build_service_worker.py`
+- `pytest -k 'service_worker' -q` *(fails: ImportError: cannot import name 'research_agent')*
+
+------
+https://chatgpt.com/codex/tasks/task_e_68635c885a948333985cd0dfed6e89d4",OpenAI_Codex,24208299,MontrealAI,closed,2025-07-01T04:29:08Z,2025-07-01T04:29:20Z,2025-07-01T04:29:20Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/2834,35,1.0,False
+3206379276,359,分析PWA状态切换体验问题,"Optimize PWA state restoration for a seamless, imperceptible background-to-foreground transition, eliminating loading screens and flickering.
+
+The original implementation showed a loading screen and flickering when the PWA returned from the background, due to state restoration timing and UI handling. This PR refactors the PWA state management to initialize and restore state *before* the Vue app mounts, uses a new loading state manager to coordinate resource loading, and enhances Service Worker caching and navigation preloading. All visual indicators and console logs related to this process have been removed to ensure a truly native-like, ""no-sense"" user experience.",Cursor,51039935,jxxghp,closed,2025-07-06T10:31:58Z,2025-07-06T10:35:53Z,2025-07-06T10:35:53Z,657824656,https://api.github.com/repos/jxxghp/MoviePilot-Frontend,https://github.com/jxxghp/MoviePilot-Frontend/pull/359,35,1.0,False
+3071302729,566,fix(website): Remove Google Fonts caching and add JS files caching in VitePWA,"# fix(website): Remove Google Fonts caching and add JS files caching in VitePWA
+
+- Removed Google Fonts caching configuration as it's not being used in the project
+- Added NetworkFirst caching strategy for JS files to ensure they update properly when changed
+
+Fixes the issue where JS files were not being updated properly.
+
+Link to Devin run: https://app.devin.ai/sessions/8528638d44f9419b859c1b3582fe63cb
+Requested by: Kazuki Yamada
+",Devin,158243242,devin-ai-integration[bot],closed,2025-05-18T02:29:47Z,2025-05-18T02:51:18Z,2025-05-18T02:51:18Z,828119367,https://api.github.com/repos/yamadashy/repomix,https://github.com/yamadashy/repomix/pull/566,35,1.0,False
+3111826436,1464,[alpha_factory] inline WASM assets,"## Summary
+- inline pyodide asm and wasm-gpt2 placeholders in the Insight build
+- expose helper to load Pyodide from a base64 blob
+- allow the LLM loader to read a base64 model
+- verify Simulator initializes quickly
+
+## Testing
+- `python check_env.py --auto-install`
+- `pre-commit run --files alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/build.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/lib/pyodide.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/src/utils/llm.js alpha_factory_v1/demos/alpha_agi_insight_v1/insight_browser_v1/tests/simulator_perf.test.js tests/test_simulator_init.py`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in Collector)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_683e2480c83c8333a86bdeb7f1e6bc17",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-02T22:32:54Z,2025-06-02T22:33:01Z,2025-06-02T22:33:01Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1464,35,0.27906052939681897,False
+3122714770,1637,[alpha_factory] Skip wasm preload when inlined,"## Summary
+- avoid adding preload tag when wasm is embedded
+- refresh generated dist/index.html
+- check CSP tests for embedded wasm
+- ensure the browser test checks for any wasm requests
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: 135 failed, 512 passed, 43 skipped)*
+
+------
+https://chatgpt.com/codex/tasks/task_e_6842078e39e48333aceccca0ecfe0599",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-05T21:23:05Z,2025-06-05T21:23:26Z,2025-06-05T21:23:26Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1637,35,0.2634868166151052,False
+3114659416,1500,[alpha_factory] inline wasm assets,"## Summary
+- inline `pyodide.asm.wasm` and `wasm-gpt2.tar` during manual build
+- decode embedded WASM in runtime loader
+- test that `window.PYODIDE_WASM_BASE64` exists in the built UI
+
+## Testing
+- `python check_env.py --auto-install`
+- `pytest -q` *(fails: ValueError: Duplicated timeseries in CollectorRegistry)*
+- `pytest tests/test_wasm_base64.py -q`
+
+------
+https://chatgpt.com/codex/tasks/task_e_683f210c617c8333933deaf6d9902bf9",OpenAI_Codex,24208299,MontrealAI,closed,2025-06-03T16:27:50Z,2025-06-03T16:27:57Z,2025-06-03T16:27:57Z,922805069,https://api.github.com/repos/MontrealAI/AGI-Alpha-Agent-v0,https://github.com/MontrealAI/AGI-Alpha-Agent-v0/pull/1500,35,0.2602794208551326,False
